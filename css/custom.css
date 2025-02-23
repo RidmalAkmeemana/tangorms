@@ -1,0 +1,96 @@
+/* Custom Theme Colors */
+        body {
+            background-color: black; /* Black background */
+            color: white; /* White text */
+        }
+
+        .panel-default {
+            border: 1px solid #FF6600; /* Orange border for panel */
+            background-color: #333; /* Dark background for the panel */
+        }
+
+        .panel-default .panel-heading {
+            background-color: #FF6600; /* Orange background for panel heading */
+            color: white;
+        }
+
+        .input-group-addon {
+            background-color: #FF6600; /* Orange background for input group add-ons */
+            color: white;
+        }
+
+        .form-control {
+            background-color: #555; /* Dark background for inputs */
+            color: white;
+            border: 1px solid #FF6600; /* Orange border for form inputs */
+        }
+
+        .form-control:focus {
+            border-color: #FF6600; /* Orange border on focus */
+            background-color: #333; /* Dark background when focused */
+        }
+
+        .btn-primary {
+            background-color: #FF6600; /* Orange background for the button */
+            border-color: #FF6600;
+        }
+
+        .btn-primary:hover {
+            background-color: #e65c00; /* Slightly darker orange on hover */
+            border-color: #e65c00;
+        }
+
+        .alert-danger {
+            background-color: #cc3300; /* Red background for error messages */
+            color: white;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        h3 {
+            font-size: 24px;
+            color: white;
+        }
+
+        .forgot-password {
+            color: #FF6600;
+            font-size: 14px;
+        }
+
+        .forgot-password:hover {
+            text-decoration: underline;
+        }
+
+        /* Center the login form vertically on the page */
+        .row {
+            margin-top: 20px;
+        }
+
+        /* Adjust the logo container */
+        .logo-container {
+            display: flex;
+            justify-content: center; /* Centers the logo horizontally */
+            margin-bottom: 30px; /* Space between the logo and form */
+        }
+
+        .logo-container img {
+            max-width: 100%;
+            height: auto;
+            max-height: 250px; /* You can adjust this height as needed */
+        }
+
+        /* Login form styles */
+        .login-form {
+            width: 100%;
+        }
+
+        .login-form .input-group {
+            margin-bottom: 20px; /* Increased margin for better spacing */
+        }
+
+        .login-form .btn {
+            margin-top: 20px;
+        }
+

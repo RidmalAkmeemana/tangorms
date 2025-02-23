@@ -3,11 +3,12 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/xampp/htdocs/onlineclothesstore/controller/user_controller.php</file>
-            <file>file:/C:/xampp/htdocs/onlineclothesstore/js/uservalidation.js</file>
-            <file>file:/C:/xampp/htdocs/onlineclothesstore/view/add-user.php</file>
-            <file>file:/C:/xampp/htdocs/onlineclothesstore/model/user_model.php</file>
-            <file>file:/C:/xampp/htdocs/onlineclothesstore/view/login.php</file>
+            <file>file:/C:/xampp/htdocs/TangoRMS/controller/login_controller.php</file>
+            <file>file:/C:/xampp/htdocs/TangoRMS/model/login_model.php</file>
+            <file>file:/C:/xampp/htdocs/TangoRMS/index.php</file>
+            <file>file:/C:/xampp/htdocs/TangoRMS/commons/db_connection.php</file>
+            <file>file:/C:/xampp/htdocs/TangoRMS/view/dashboard.php</file>
+            <file>file:/C:/xampp/htdocs/TangoRMS/view/login.php</file>
         </group>
     </open-files>
 </project-private>

@@ -2,7 +2,7 @@
 class DbConnection{
 
     private $hostname="localhost";
-    private $dbname="bit_2024_db";
+    private $dbname="tango_restaurant_management_db";
     private $dbusername="root";
     private $dbpassword="";
     public $con;

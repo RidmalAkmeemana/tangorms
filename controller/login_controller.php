@@ -11,7 +11,7 @@ include '../commons/session.php';
 
  $status = $_GET["status"];
 
- include '../model/login_model.php';
+ include_once '../model/login_model.php';
  $loginObj = new Login ();
 
  switch($status)

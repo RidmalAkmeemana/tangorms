@@ -82,6 +82,7 @@ $moduleResult = $moduleObj->getAllModules();
                 }
             ?>    
         </div>
+        
     </div>
 
     <!-- JavaScript Includes -->

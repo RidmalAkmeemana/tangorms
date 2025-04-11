@@ -1,6 +1,6 @@
 <?php
 
-include '../commons/db_connection.php';
+include_once '../commons/db_connection.php';
 
 $dbcon = new DbConnection();
 
@@ -18,9 +18,15 @@ public function validateUser($login_username,$login_password){
     return $result;
 }
 
+public function addUserLogin($user_id,$user_email,$nic){  
 
+    $con = $GLOBALS["con"];
+    $pw = sha1($nic);
+    $sql = "INSERT INTO login (login_username,login_password,user_id) values ('$user_email','$pw','$user_id')";
 
-
-
-
+    $result = $con->query($sql) or die($con->error);
+     return $result;
+    }
+    
 }
+

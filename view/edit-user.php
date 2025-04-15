@@ -19,6 +19,14 @@ $contactResult=$userObj->getUserContact($user_id);
 $contactRow1=$contactResult->fetch_assoc();
 $contactRow2=$contactResult->fetch_assoc();
 
+$userFunctionResult = $userObj->getUserFunctions($user_id);
+
+$functionArray = array();
+
+while($function_row=$userFunctionResult->fetch_assoc()){
+    
+    array_push($functionArray,$function_row["function_id"]);
+}
 ?>
 
 <html>
@@ -46,7 +54,7 @@ $contactRow2=$contactResult->fetch_assoc();
                     </a>
                 </ul>
             </div>
-            <form action="../controller/user_controller.php?status=add_user" method="post" enctype="multipart/form-data">
+            <form action="../controller/user_controller.php?status=update_user" method="post" enctype="multipart/form-data">
                 <div class = "col-md-9">
         
                      <div class="row">
@@ -76,6 +84,7 @@ $contactRow2=$contactResult->fetch_assoc();
                         </div>
                         <div class = "col-md-3">
                             <input type=" text" class = "form-control" name = "fname" id="fname" value="<?php echo $userRow["user_fname"];?>"/>
+                            <input type="hidden" name="user_id" value="<?php echo $user_id;?>" />
                         </div>
                          <div class = "col-md-3">
                             <label class ="control-lebel">Last Name</label>
@@ -121,7 +130,16 @@ $contactRow2=$contactResult->fetch_assoc();
                         <div class="col-md-3">
                             <input type="file" class="form-control" name="user_image" id="user_image" onchange="displayImage(this);"/>
                             <br/>
-                            <img id="img_prev" style=""/>
+                            <?php 
+                                
+                                if($userRow["user_image"]!=""){
+                                    
+                                    $image=$userRow["user_image"];
+                            ?>
+                            <img id="img_prev" style="" src="../images/user_images/<?php echo $image?>" width="60px" height="60px"/>
+                            <?php
+                                }
+                            ?>
                         </div>
                     </div>
                     <div class="row">
@@ -167,15 +185,20 @@ $contactRow2=$contactResult->fetch_assoc();
                         <div class="col-md-12">
                             &nbsp;
                         </div>
-                    </div>                  
+                    </div>      
+                     <div class="row">
+                        <div class="col-md-12">
+                            &nbsp;
+                        </div>
+                    </div> 
                 
                     <div class="row">
-                        <div id="display_functions">
-                           <div class="col-md-3">
+                        
+                        <div class="col-md-3">
                             <label class="control-label">User Role</label>
-                            </div>  
                         </div>
-                             <div class="col-md-3">
+                        
+                        <div class="col-md-3">
                             <select  name="user_role" id="user_role" class="form-control" required="required">
                                 <option value="">--------</option>
                                 <?php 
@@ -208,54 +231,48 @@ $contactRow2=$contactResult->fetch_assoc();
                     <div class="row">
                         <div class="col-md-12"> &nbsp; </div>
                     </div>
-                    <div class="row">
+                     <div class="row">
                         <div id="display_functions">
                             <?php
-                            
-                                //This section re-used from user_controller.php's load_functions case
-                                $role_id = $userRow["user_role"];
-        
-                                $moduleResult=$userObj->getRoleModules($role_id);
+                            $role_id = $userRow["user_role"];
 
-                                while ($module_row=$moduleResult->fetch_assoc())
-                                {
-                                    $module_id = $module_row["module_id"];
-                                    $functionResult = $userObj->getModuleFunctions($module_id);
-                                    ?>
-                                        <div class="col-md-4">
-                                            <h4>
-                                                <?php
-                                                    echo $module_row["module_name"];
-                                                    echo "</br>";
-                                                ?>
-                                            </h4>
-                                                <?php
-                                                    while($fun_row=$functionResult->fetch_assoc()){
+                            $moduleResult = $userObj->getRoleModules($role_id);
+
+                            while ($module_row = $moduleResult->fetch_assoc()) {
+                                $module_id = $module_row["module_id"];
+                                $functionResult = $userObj->getModuleFunctions($module_id);
+                                ?>
+                                <div class="col-md-4">
+                                    <h4>
+                                        <?php
+                                        echo $module_row["module_name"];
+                                        echo "</br>";
+                                        ?>
+                                    </h4>
+                                        <?php
+                                        while ($fun_row = $functionResult->fetch_assoc()) {
+                                            ?>
+                                        <input type="checkbox" name="fun[]" value="<?php echo $fun_row["function_id"]; ?>" 
+                                               <?php
+                                               for($i=0; $i<count($functionArray);$i++){
+                                                   if($functionArray[$i]==$fun_row["function_id"]){
                                                         ?>
-                                                        <input type="checkbox" name="fun[]" value="<?php echo $fun_row["function_id"];?>" 
-                                                               
-                                                               <?php
-                                                               if(in_array($fun_row["function_id"],$functionArray)){
-                                                               ?>
-                                                               
-                                                               checked
-                                                               
-                                                               <?php
-                                                               }
-                                                               ?>
-                                                               
-                                                               />
-                                                        <?php echo $fun_row["function_name"];?>
-                                                        <br/>
+                                                        checked
                                                         <?php
-                                                    }
-                                                ?>
-                                        </div>
+                                                   }
+                                               }
+                                               ?>
+                                          />
+                                        <?php echo $fun_row["function_name"]; ?>
+                                        <br/>
+                                        <?php
+                                    }
+                                    ?>
+                                </div>
                                     <?php
                                 }
-                                
-                                //Above section re-used from user_controller.php's load_functions case
                             ?>
+                            
                         </div>
                     </div>
                     <div class="row">
@@ -268,6 +285,7 @@ $contactRow2=$contactResult->fetch_assoc();
                         </div>
                     </div>
                 </div>
+              </div>
             </form>
         </dive 
             </form> 

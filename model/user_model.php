@@ -98,10 +98,41 @@ class User{
     
     public function getUser($user_id){
         $con=$GLOBALS["con"];
-        $sql = "SELECT * FROM User WHERE user_id='$user_id'";
+        $sql="SELECT * FROM user u , role r WHERE u.user_role = r.role_id AND user_id='$user_id'";
         $result = $con->query($sql) or die($con->error);
         return $result;
     }
     
+    public function getUserFunctions($user_id){
+        $con=$GLOBALS["con"];
+        $sql = "SELECT * FROM function_user WHERE user_id='$user_id'";
+        $result = $con->query($sql) or die($con->error);
+        return $result;
+    }
     
-}
+    public function UpdateUser($fname,$lname,$email,$dob,$nic,$user_role,$user_image,$user_id){
+        
+        $con=$GLOBALS["con"];
+        $sql = "UPDATE user SET user_fname='$fname', user_lname='$lname', user_email='$email', "
+                . "user_dob='$dob', user_nic='$nic', user_image='$user_image', user_role='$user_role' WHERE user_id='$user_id'";
+        $result = $con->query($sql) or die($con->error);
+        
+    }
+            
+     public function removeUserContact($user_id){
+        
+        $con=$GLOBALS["con"];
+        $sql="DELETE FROM user_contact WHERE user_id='$user_id'";
+        $result=$con->query($sql) or die($con->error);
+    
+    }
+    
+    public function removeUserFunctions($user_id){
+        
+        $con=$GLOBALS["con"];
+        $sql="DELETE FROM function_user WHERE user_id='$user_id'";
+        $result=$con->query($sql) or die($con->error);
+        
+    }
+    
+ }

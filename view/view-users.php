@@ -19,6 +19,128 @@ $userResult = $userObj->getAllUsers();
 <html>
     <head>
         <?php include_once "../includes/bootstrap_css_includes.php"?>
+        <link rel="stylesheet" type="text/css" href="../css/dataTables.bootstrap.min.css"/>
+        
+        <style>
+            body {
+    background-color: #5c5b5b;
+    color: white;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.list-group-item {
+    background-color: #ffffff;
+    border: 1px solid #FF6600;
+    color: #333;
+    font-weight: 500;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.list-group-item:hover {
+    background-color: #FF6600;
+    color: white;
+}
+
+.container {
+    padding-top: 30px;
+}
+
+ul.list-group {
+    margin-top: 20px;
+}
+
+.col-md-3, .col-md-9 {
+    margin-top: 20px;
+}
+
+.alert-success {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    font-weight: bold;
+    padding: 10px 15px;
+    border-radius: 4px;
+}
+
+.table-striped {
+    background-color: white;
+    color: #333;
+    border: 1px solid #ddd;
+}
+
+.table-striped thead th {
+    background-color: #FF6600;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+}
+
+.table-striped tbody td {
+    vertical-align: middle;
+    text-align: center;
+}
+
+.table-striped tbody tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.table-striped tbody tr:hover {
+    background-color: #ffe6cc;
+}
+
+.success {
+    background-color: #d4edda !important;
+    color: #155724 !important;
+    font-weight: 600;
+}
+
+.danger {
+    background-color: #f8d7da !important;
+    color: #721c24 !important;
+    font-weight: 600;
+}
+
+.btn {
+    font-weight: 500;
+    padding: 5px 10px;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.btn-info {
+    background-color: #17a2b8;
+    border-color: #17a2b8;
+    color: white;
+}
+
+.btn-warning {
+    background-color: #ffc107;
+    border-color: #ffc107;
+    color: black;
+}
+
+.btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
+    color: white;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+    color: white;
+}
+
+.btn:hover {
+    opacity: 0.85;
+}
+
+        </style>
     </head>
     <body>
         <div class="container">
@@ -59,7 +181,7 @@ $userResult = $userObj->getAllUsers();
                 ?>
                 <div class="row">
                     <div class="col-md-12">
-                        <table class="table table-striped">
+                        <table class="table table-striped" id="usertable">
                             <thead>
                                 <tr>
                                     <th>&nbsp;</th>
@@ -173,5 +295,15 @@ $userResult = $userObj->getAllUsers();
             </div>
         </div>
     </body>
-    <script src="../js/jquery-3.7.1.js"></script>
+    
+    <script src="../js/datatable/jquery-3.5.1.js"></script>
+    <script src="../js/datatable/jquery.dataTables.min.js"></script>
+    <script src="../js/datatable/dataTables.bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            
+            $("#usertable").DataTable();
+        });
+    </script>
 </html>
+

@@ -12,50 +12,7 @@ $moduleResult = $moduleObj->getAllModules();
 <html lang="en">
 <head>
     <?php include_once "../includes/bootstrap_css_includes.php" ?>
-    <style>
-        /* Custom Theme Colors */
-        body {
-            background-color: black; /* Black background */
-            color: white; /* White text */
-        }
-
-        .panel {
-            background-color: #333; /* Dark background for panels */
-            border: 1px solid #FF6600; /* Orange border for panels */
-        }
-
-        .panel h1, .panel h4 {
-            color: white; /* White text for titles inside panels */
-        }
-
-        .panel:hover {
-            background-color: #444; /* Slightly darker panel on hover */
-        }
-
-        a {
-            text-decoration: none; /* Remove underline from links */
-            color: inherit; /* Inherit the color from parent */
-        }
-
-        .panel-heading {
-            background-color: #FF6600; /* Orange background for panel heading */
-            color: white;
-        }
-
-        h1 {
-            color: #FF6600; /* Orange color for headings */
-        }
-
-        .col-md-4 {
-            margin-bottom: 20px;  Add margin at the bottom of each module panel 
-        }
-
-        .logo-container img {
-            max-width: 100%;
-            height: auto;
-            max-height: 250px;
-        }
-    </style>
+    <link rel="stylesheet" href="../css/dashboard.css"> 
 </head>
 <body>
     <div class="container">

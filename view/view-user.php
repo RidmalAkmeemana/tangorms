@@ -44,6 +44,82 @@ while($fun_row=$userFunctionResult->fetch_assoc()){
 <html>
     <head>
         <?php include_once "../includes/bootstrap_css_includes.php"?>
+        <style>
+            body {
+    background-color: #5c5b5b;
+    color: white;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.container {
+    padding-top: 30px;
+}
+
+ul.list-group {
+    margin-top: 20px;
+}
+
+.list-group-item {
+    background-color: #ffffff;
+    border: 1px solid #FF6600;
+    color: #333;
+    font-weight: 500;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.list-group-item:hover {
+    background-color: #FF6600;
+    color: white;
+}
+
+.alert-success {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    font-weight: bold;
+    padding: 10px 15px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+}
+
+/* Profile Section */
+table.table-striped {
+    background-color: white;
+    color: #333;
+    border: 1px solid #ddd;
+    font-size: 16px;
+}
+
+.table-striped td {
+    padding: 12px;
+    vertical-align: middle;
+    font-weight: 500;
+}
+
+.table-striped tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.table-striped tr:hover {
+    background-color: #ffe6cc;
+}
+
+img {
+    border-radius: 6px;
+    border: 3px solid #FF6600;
+}
+
+/* Permissions Section */
+#display_functions {
+    margin-top: 30px;
+    padding:
+
+        </style>
     </head>
     <body>
         <div class="container">

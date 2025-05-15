@@ -32,6 +32,114 @@ while($function_row=$userFunctionResult->fetch_assoc()){
 <html>
     <head>
         <?php include_once "../includes/bootstrap_css_includes.php"?>
+        <style>
+    body {
+        background-color: #5c5b5b;
+        color: white;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    a {
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .list-group-item {
+        background-color: #ffffff;
+        border: 1px solid #FF6600;
+        color: #333;
+        font-weight: 500;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .list-group-item:hover {
+        background-color: #FF6600;
+        color: white;
+    }
+
+    .panel {
+        background-color: #faf7f7;
+        border: 1px solid #FF6600;
+        color: #333;
+        box-shadow: 0 0 10px rgba(255, 102, 0, 0.3);
+    }
+
+    .panel-info > .panel-heading {
+        background-color: #FF6600;
+        color: white;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    .panel-body {
+        background-color: #faf7f7;
+        text-align: center;
+    }
+
+    .h1 {
+        color: #FF6600;
+        font-size: 48px;
+    }
+
+    .container {
+        padding-top: 30px;
+    }
+
+    ul.list-group {
+        margin-top: 20px;
+    }
+
+    .col-md-3, .col-md-9 {
+        margin-top: 20px;
+    }
+
+    /* Form Controls */
+    label.control-label, label.control-lebel {
+        color: white;
+        font-weight: 500;
+    }
+
+    input.form-control,
+    select.form-control {
+        background-color: #f5f5f5;
+        border: 1px solid #ccc;
+        color: #333;
+    }
+
+    input.form-control:focus,
+    select.form-control:focus {
+        border-color: #FF6600;
+        box-shadow: 0 0 5px rgba(255, 102, 0, 0.6);
+    }
+
+    .btn-primary {
+        background-color: #FF6600;
+        border-color: #FF6600;
+    }
+
+    .btn-primary:hover {
+        background-color: #e55d00;
+        border-color: #e55d00;
+    }
+
+    .btn-danger {
+        background-color: #aa3333;
+        border-color: #aa3333;
+    }
+
+    .btn-danger:hover {
+        background-color: #992222;
+        border-color: #992222;
+    }
+
+    #img_prev {
+        border: 1px solid #ccc;
+        padding: 2px;
+        margin-top: 5px;
+        border-radius: 4px;
+    }
+</style>
+
     </head>
     <body>
         <div class="container">
@@ -48,7 +156,7 @@ while($function_row=$userFunctionResult->fetch_assoc()){
                         <span class="glyphicon glyphicon-search"></span> &nbsp;
                         View users
                     </a>
-                    <a href="generate-user-reports.php"class="list-group-item">
+                    <a href="user-report.php"class="list-group-item">
                         <span class="glyphicon glyphicon-book"></span> &nbsp;
                         Generate user reports
                     </a>

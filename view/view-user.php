@@ -136,7 +136,7 @@ img {
                         <span class="glyphicon glyphicon-search"></span> &nbsp;
                         View users
                     </a>
-                    <a href="generate-user-reports.php"class="list-group-item">
+                    <a href="user-report.php"class="list-group-item">
                         <span class="glyphicon glyphicon-book"></span> &nbsp;
                         Generate user reports
                     </a>
@@ -158,6 +158,7 @@ img {
                 <?php
                     }
                 ?>
+            
             <div class="row">
                 <div class="col-md-12">
                     <table class="table table-striped">
@@ -259,6 +260,9 @@ img {
                     </div>
                       
             </div>
+         </div>
+        </div>
+     </div>
     </body>
     <script src="../js/jquery-3.7.1.js"></script>
 </html>

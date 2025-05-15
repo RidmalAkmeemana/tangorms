@@ -132,7 +132,7 @@
         }
 
         .col-md-4 {
-            margin-bottom: 20px;  Add margin at the bottom of each module panel; 
+            margin-bottom: 20px;
         }
 
         .logo-container img {
@@ -140,4 +140,7 @@
             height: auto;
             max-height: 250px;
         }
+        
+ /*    User Management  css */
+ 
  

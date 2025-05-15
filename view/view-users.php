@@ -6,7 +6,7 @@ include_once '../model/user_model.php';
 
 //get user information from session
 $userrow=$_SESSION["user"];
-
+ 
 $moduleObj = new Module();
 $userObj = new User();
 
@@ -157,7 +157,7 @@ ul.list-group {
                         <span class="glyphicon glyphicon-search"></span> &nbsp;
                         View users
                     </a>
-                    <a href="generate-user-reports.php"class="list-group-item">
+                    <a href="user-report.php"class="list-group-item">
                         <span class="glyphicon glyphicon-book"></span> &nbsp;
                         Generate user reports
                     </a>

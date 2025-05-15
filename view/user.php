@@ -98,7 +98,7 @@ ul.list-group {
                         <span class="glyphicon glyphicon-search"></span> &nbsp;
                         View users
                     </a>
-                    <a href="generate-user-reports.php"class="list-group-item">
+                    <a href="user-report.php"class="list-group-item">
                         <span class="glyphicon glyphicon-book"></span> &nbsp;
                         Generate user reports
                     </a>

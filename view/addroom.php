@@ -145,7 +145,7 @@ $roleResult = $userObj->getAllRoles();
                     </a>
                 </ul>
             </div>
-            <form action="../controller/user_controller.php?status=add_user" method="post" enctype="multipart/form-data">
+            <form action="../controller/table_controller.php?status=add_room" method="post" enctype="multipart/form-data">
                 <div class = "col-md-9">
         
                      <div class="row">
@@ -173,7 +173,7 @@ $roleResult = $userObj->getAllRoles();
                             <label class="control-label">Create Room</label>
                         </div>
                         <div class="col-md-3">
-                            <input type="text" class="form-control" name="nic" id="room"/>
+                            <input type="text" class="form-control" name="room_name" id="room_name"/>
                         </div>
                     </div>
                     <div class="row">
@@ -181,17 +181,25 @@ $roleResult = $userObj->getAllRoles();
                             <label class="control-label">Add Layout</label>
                         </div>
                         <div class="col-md-3">
-                            <input type="file" class="form-control" name="user_image" id="user_image" onchange="displayImage(this);"/>
+                            <input type="file" class="form-control" name="room_layout" id="room_layout" onchange="displayImage(this);"/>
                             <br/>
                             <img id="img_prev" style=""/>
                         </div>
-                   
+                     </div>    
+                 <div class="row">
+                   &nbsp;
                 </div>
+                <div class="row">
+                    <div class="col-md-offset-3 col-md-6">
+                        <input type="submit" class="btn btn-primary" value="Submit"/>
+                        <input type="reset" class="btn btn-danger" value="Reset"/>
+                    </div>
+                </div>   
+                   
+               
              </div>
             </form> 
         </div>
-       
-          
     </body>
     <script src="../js/jquery-3.7.1.js"></script>
     <script src="../js/uservalidation.js"></script>

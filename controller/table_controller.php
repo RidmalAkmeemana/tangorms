@@ -36,7 +36,49 @@ switch ($status) {
             <?php
       
         break;
-
+    case "add_room":
+        
+        try{
+        // Get the data from the form
+        $room_name = $_POST["room_name"];
+        
+        if($room_name==""){
+            throw new Exception("Please Enter Room Name");
+        }
+        
+        $room_layout = $_FILES["room_layout"];
+        
+        if($room_layout['name']==""){
+            throw new Exception("Please attache the room image");
+        }
+        
+        $file_name= time() . "_" . $room_layout["name"];
+        $path = "../images/layouts/$file_name";
+        move_uploaded_file($room_layout["tmp_name"], $path);
+            
+        
+        // Call the addroom() function in the model
+        $tableObj->addRoom($room_name, $file_name);
+            $msg = "Room '$room_name' added successfully!";
+            $msg = base64_encode($msg);
+            ?>
+            <script>
+                window.location = "../view/view-tables.php?msg=<?php echo $msg; ?>"; // Redirect to table list
+            </script>
+            <?php
+        }
+        catch (Exception $ex){
+            
+            $msg = $ex->getMessage();
+            $msg = base64_encode($msg);
+            ?>
+            <script>
+                window.location = "../view/addroom.php?msg=<?php echo $msg; ?>";
+            </script>
+            <?php
+        }
+        break;
+   
     case "delete":
         $table_id = $_GET['table_id'];
         $tableObj->deleteTable($table_id);
@@ -50,15 +92,23 @@ switch ($status) {
         <?php
         break;
 
-    case "update_table":
+    case "update_room":
         
          // Get the data from the form
-        $table_name = $_POST["table_name"];
-        $room_id = $_POST["room"];
-        $capacity = $_POST["capacity"];
-        $status = $_POST["status"];
-         $table_id= $_POST["table_id"];
-         
+        $room_name = $_POST["room_id"];
+        $room_layout = $_FILES["room_layout"];
+
+        // Call the updateroom() function in the model
+        $tableObj->updateRoomLayout($room_id, $room_layout);
+            $msg = "Room '$room_name' Updated successfully!";
+            $msg = base64_encode($msg);
+            ?>
+            <script>
+                window.location = "../view/view-tables.php?msg=<?php echo $msg; ?>"; // Redirect to table list
+            </script>
+            <?php
+      
+        break;
         
         
         //update table

@@ -40,6 +40,14 @@ class RestaurantTable
         $stmt_update = $con->prepare($sql_update);
     }
     
+     public function addRoom($room_name, $room_layout)
+    {
+        $con = $GLOBALS["con"];
+        $sql = "INSERT INTO room (room_name,room_layout) VALUES ('$room_name','$room_layout')";
+      
+        $con->query($sql) or die($con->error);
+    }
+    
     public function updateTableStatus($table_id, $status_id) {  //  Change to status_id
         $con = $GLOBALS["con"];
         $sql = "UPDATE restaurant_table SET status_id = '$status_id' WHERE table_id = '$table_id'";
@@ -99,4 +107,40 @@ class RestaurantTable
         $result = $con->query($sql) or die($con->error);
         return $result;
     }
+    
+    public function getVacantTables(){
+        $con=$GLOBALS["con"];
+        $sql = "SELECT COUNT(table_id) as vacant_count FROM restaurant_table WHERE status_id = '1'";
+        $result = $con->query($sql) or die($con->error);
+        return $result;
+    }
+    
+    public function getReservedTables(){
+        $con=$GLOBALS["con"];
+        $sql = "SELECT COUNT(table_id) as Reserved_count FROM restaurant_table WHERE status_id = '2'";
+        $result = $con->query($sql) or die($con->error);
+        return $result;
+    }
+     public function getSeatedTables(){
+        $con=$GLOBALS["con"];
+        $sql = "SELECT COUNT(table_id) as Seated_count FROM restaurant_table WHERE status_id = '3'";
+        $result = $con->query($sql) or die($con->error);
+        return $result;
+    }
+    
+      public function getDirtyTables(){
+        $con=$GLOBALS["con"];
+        $sql = "SELECT COUNT(table_id) as Dirty_count FROM restaurant_table WHERE status_id = '4'";
+        $result = $con->query($sql) or die($con->error);
+        return $result;
+    }
+    
+      public function getOOSTables(){
+        $con=$GLOBALS["con"];
+        $sql = "SELECT COUNT(table_id) as OOS_count FROM restaurant_table WHERE status_id = '5'";
+        $result = $con->query($sql) or die($con->error);
+        return $result;
+    }
+    
+    
 }

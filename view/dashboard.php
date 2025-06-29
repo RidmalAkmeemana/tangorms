@@ -6,7 +6,8 @@ include_once '../model/module_model.php';
 $userrow = $_SESSION["user"];
 
 $moduleObj = new Module();
-$moduleResult = $moduleObj->getAllModules();
+// Get only the modules that the current user has access to
+$moduleResult = $moduleObj->getModulesByUser($userrow["user_id"]);
 ?>
 
 <html lang="en">
@@ -16,30 +17,25 @@ $moduleResult = $moduleObj->getAllModules();
 </head>
 <body>
     <div class="container">
-        <?php $pageName="DASHBOARD" ?>
+        <?php $pageName = "DASHBOARD"; ?>
         <?php include_once "../includes/header_row_includes.php"; ?>
 
         <div class="row">
-            <?php
-                while ($module_row = $moduleResult->fetch_assoc()) {
-            ?> 
-                <div class="col-md-4">
-                    <a href="<?php echo $module_row["module_url"] ?>" style="text-decoration:none;color:#fff">
+            <?php while ($module_row = $moduleResult->fetch_assoc()): ?> 
+                <div class="col-md-4 mb-4">
+                    <a href="<?= htmlspecialchars($module_row["module_url"]) ?>" style="text-decoration: none; color: #fff">
                         <div class="panel">
                             <h1 align="center">
-                                <img src="../images/icons/<?php echo $module_row["module_icon"] ?>" height="100px" width="80px"/>
+                                <img src="../images/icons/<?= htmlspecialchars($module_row["module_icon"]) ?>" height="100px" width="80px"/>
                             </h1>
                             <h4 align="center">
-                                <?php echo $module_row["module_name"]; ?>
+                                <?= htmlspecialchars($module_row["module_name"]) ?>
                             </h4>
                         </div>
                     </a>
                 </div>
-            <?php
-                }
-            ?>    
+            <?php endwhile; ?>
         </div>
-        
     </div>
 
     <!-- JavaScript Includes -->

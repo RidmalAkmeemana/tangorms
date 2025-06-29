@@ -1,12 +1,15 @@
 <?php
 
 include_once '../commons/session.php';
+include_once '../commons/helpers/permission_helper.php';
 include_once '../model/module_model.php';
 include_once '../model/user_model.php';
 
+checkFunctionPermission($_SERVER['PHP_SELF']);
+
 //get user information from session
-$userrow=$_SESSION["user"];
- 
+$userrow = $_SESSION["user"];
+
 $moduleObj = new Module();
 $userObj = new User();
 
@@ -17,293 +20,256 @@ $userResult = $userObj->getAllUsers();
 ?>
 
 <html>
-    <head>
-        <?php include_once "../includes/bootstrap_css_includes.php"?>
-        <link rel="stylesheet" type="text/css" href="../css/dataTables.bootstrap.min.css"/>
-        
-        <style>
-            body {
-    background-color: #5c5b5b;
-    color: white;
-    font-family: 'Segoe UI', sans-serif;
-}
 
-a {
-    text-decoration: none;
-    color: inherit;
-}
+<head>
+    <?php include_once "../includes/bootstrap_css_includes.php" ?>
+    <link rel="stylesheet" type="text/css" href="../css/dataTables.bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-.list-group-item {
-    background-color: #ffffff;
-    border: 1px solid #FF6600;
-    color: #333;
-    font-weight: 500;
-    transition: background-color 0.3s ease, color 0.3s ease;
-}
+    <style>
+        body {
+            background-color: #5c5b5b;
+            color: white;
+            font-family: 'Segoe UI', sans-serif;
+        }
 
-.list-group-item:hover {
-    background-color: #FF6600;
-    color: white;
-}
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
 
-.container {
-    padding-top: 30px;
-}
+        .list-group-item {
+            background-color: #ffffff;
+            border: 1px solid #FF6600;
+            color: #333;
+            font-weight: 500;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
 
-ul.list-group {
-    margin-top: 20px;
-}
+        .list-group-item:hover {
+            background-color: #FF6600;
+            color: white;
+        }
 
-.col-md-3, .col-md-9 {
-    margin-top: 20px;
-}
+        .container {
+            padding-top: 30px;
+        }
 
-.alert-success {
-    background-color: #28a745;
-    color: white;
-    border: none;
-    font-weight: bold;
-    padding: 10px 15px;
-    border-radius: 4px;
-}
+        ul.list-group {
+            margin-top: 20px;
+        }
 
-.table-striped {
-    background-color: white;
-    color: #333;
-    border: 1px solid #ddd;
-}
+        .col-md-3,
+        .col-md-9 {
+            margin-top: 20px;
+        }
 
-.table-striped thead th {
-    background-color: #FF6600;
-    color: white;
-    font-weight: bold;
-    text-align: center;
-}
+        .alert-success {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            font-weight: bold;
+            padding: 10px 15px;
+            border-radius: 4px;
+        }
 
-.table-striped tbody td {
-    vertical-align: middle;
-    text-align: center;
-}
+        .table-striped {
+            background-color: white;
+            color: #333;
+            border: 1px solid #ddd;
+        }
 
-.table-striped tbody tr:nth-child(even) {
-    background-color: #f2f2f2;
-}
+        .table-striped thead th {
+            background-color: #FF6600;
+            color: white;
+            font-weight: bold;
+        }
 
-.table-striped tbody tr:hover {
-    background-color: #ffe6cc;
-}
+        .table-striped tbody td {
+            vertical-align: middle;
+        }
 
-.success {
-    background-color: #d4edda !important;
-    color: #155724 !important;
-    font-weight: 600;
-}
+        .table-striped tbody tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
 
-.danger {
-    background-color: #f8d7da !important;
-    color: #721c24 !important;
-    font-weight: 600;
-}
+        .table-striped tbody tr:hover {
+            background-color: #ffe6cc;
+        }
 
-.btn {
-    font-weight: 500;
-    padding: 5px 10px;
-    border-radius: 4px;
-    transition: all 0.3s ease;
-}
+        .success {
+            background-color: #d4edda !important;
+            color: #155724 !important;
+            font-weight: 600;
+        }
 
-.btn-info {
-    background-color: #17a2b8;
-    border-color: #17a2b8;
-    color: white;
-}
+        .danger {
+            background-color: #f8d7da !important;
+            color: #721c24 !important;
+            font-weight: 600;
+        }
 
-.btn-warning {
-    background-color: #ffc107;
-    border-color: #ffc107;
-    color: black;
-}
+        .btn {
+            font-weight: 500;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
 
-.btn-success {
-    background-color: #28a745;
-    border-color: #28a745;
-    color: white;
-}
+        .btn-info {
+            background-color: #17a2b8;
+            border-color: #17a2b8;
+            color: white;
+        }
 
-.btn-danger {
-    background-color: #dc3545;
-    border-color: #dc3545;
-    color: white;
-}
+        .btn-warning {
+            background-color: #ffc107;
+            border-color: #ffc107;
+            color: black;
+        }
 
-.btn:hover {
-    opacity: 0.85;
-}
+        .btn-success {
+            background-color: #28a745;
+            border-color: #28a745;
+            color: white;
+        }
 
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <?php $pageName="USER MANAGEMENT" ?>
-            <?php include_once "../includes/header_row_includes.php";?>
-            
-            <div class="col-md-3">
-                <ul class="list-group">
-                    <a href="add-user.php"class="list-group-item">
-                        <span class="glyphicon glyphicon-plus"></span> &nbsp;
-                        Add user
-                    </a>
-                    <a href="view-users.php"class="list-group-item">
-                        <span class="glyphicon glyphicon-search"></span> &nbsp;
-                        View users
-                    </a>
-                    <a href="user-report.php"class="list-group-item">
-                        <span class="glyphicon glyphicon-book"></span> &nbsp;
-                        Generate user reports
-                    </a>
-                </ul>
-            </div>
-            <div class="col-md-9">
-                <?php
-                    
-                    if(isset($_GET["msg"])){
-                        
-                        $msg= base64_decode($_GET["msg"]);
-                        
-                ?>
-                    <div class="row">
-                        <div class="alert alert-success">
-                            <?php echo $msg;?>
-                        </div>
-                    </div>
-                <?php
-                    }
-                ?>
+        .badge {
+            display: inline-block;
+            padding: 0.35em 0.65em;
+            font-size: 0.75em;
+            font-weight: 600;
+            line-height: 1;
+            color: #fff;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: baseline;
+            border-radius: 0.375rem;
+        }
+
+        .bg-success {
+            background-color: #198754;
+            /* Bootstrap success green */
+        }
+
+        .bg-danger {
+            background-color: #dc3545;
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+            border-color: #dc3545;
+            color: white;
+        }
+
+        .btn:hover {
+            opacity: 0.85;
+        }
+
+        .user-img {
+            border: 2px solid #FF6600;
+            object-fit: cover;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <?php $pageName = "USER MANAGEMENT" ?>
+        <?php include_once "../includes/header_row_includes.php"; ?>
+        <?php require 'user-management-sidebar.php'; ?>
+
+        <div class="col-md-9">
+            <?php
+
+            if (isset($_GET["msg"])) {
+
+                $msg = base64_decode($_GET["msg"]);
+
+            ?>
                 <div class="row">
-                    <div class="col-md-12">
-                        <table class="table table-striped" id="usertable">
+                    <div class="alert alert-success">
+                        <?php echo $msg; ?>
+                    </div>
+                </div>
+            <?php
+            }
+            ?>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover align-middle text-center table-striped" id="usertable">
                             <thead>
                                 <tr>
-                                    <th>&nbsp;</th>
-                                    <th>Name</th>
-                                    <th>Email</th>
-                                    <th>Status</th>
-                                    <th>&nbsp;</th>
+                                    <th class="text-start" scope="col">Image</th>
+                                    <th class="text-start" scope="col">Name</th>
+                                    <th class="text-start" scope="col">Email</th>
+                                    <th class="text-center" scope="col">Status</th>
+                                    <th class="text-center" scope="col">Is Enable</th>
+                                    <th class="text-center" scope="col">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php
-                                    while($userRow=$userResult->fetch_assoc()){
-                                        
-                                        $img_path="../images/user_images/";
-                                        $user_id=$userRow["user_id"];
-                                        $user_id= base64_encode($user_id);
-                                        if($userRow["user_image"]==""){
-                                            
-                                            $img_path=$img_path."user.png";
-                                        }else{
-                                            $img_path=$img_path.$userRow["user_image"];
-                                        }
-                                        $status="Active";
-                                        if($userRow["user_status"]==0){
-                                            
-                                            $status="Deactive";
-                                        }
-                                        
-                                        ?>
-                                        <tr>
-                                            <td>
-                                                <img src="<?php echo $img_path;?>" width="60px" height="60px"/>
-                                            </td>
-                                            <td>
-                                                <?php echo $userRow["user_fname"]." ".$userRow["user_lname"];?>
-                                            </td>
-                                            <td>
-                                                <?php echo $userRow["user_email"];?>
-                                            </td>
-                                            <td 
-                                                <?php
-                                                if($userRow["user_status"]==1){   
-                                                ?>
-                                                class="success"
-                                                <?php
-                                                }elseif ($userRow["user_status"]==0) {
+                                <?php while ($userRow = $userResult->fetch_assoc()): ?>
+                                    <?php
+                                    $img_path = "../images/user_images/";
+                                    $user_id = base64_encode($userRow["user_id"]);
+                                    $img_file = empty($userRow["user_image"]) ? "user.png" : $userRow["user_image"];
+                                    $img_path .= $img_file;
 
-                                                ?>
-                                                class="danger"
-                                                <?php
-
-                                                }
-                                                ?>
-
-                                                ><?php echo $status;?></td>
-                                            <td>
-                                                <a href="view-user.php?user_id=<?php echo $user_id;?>" class="btn btn-info">
-                                                    <span class="glyphicon glyphicon-search"></span>
-                                                    &nbsp;
-                                                    View
+                                    $status = $userRow["user_status"] == 1 ? "Active" : "Deactive";
+                                    $status_class = $userRow["user_status"] == 1 ? "badge bg-success" : "badge bg-danger";
+                                    ?>
+                                    <tr>
+                                        <td>
+                                            <img src="<?= $img_path ?>" class="rounded-circle user-img" width="50" height="50" alt="User">
+                                        </td>
+                                        <td class="text-start pe-3"><?= htmlspecialchars($userRow["user_fname"] . " " . $userRow["user_lname"]) ?></td>
+                                        <td class="text-start pe-3"><?= htmlspecialchars($userRow["user_email"]) ?></td>
+                                        <td>
+                                            <span class="<?= $status_class ?> px-3 py-1"><?= $status ?></span>
+                                        </td>
+                                        <td>
+                                            <a href="../controller/user_controller.php?status=<?= $userRow["user_status"] == 1 ? 'deactivate' : 'activate' ?>&user_id=<?= $user_id ?>"
+                                                class="btn btn-sm <?= $userRow["user_status"] == 1 ? 'btn-danger' : 'btn-success' ?>">
+                                                <i class="fa <?= $userRow["user_status"] == 1 ? 'fa-times' : 'fa-check-circle' ?>"></i>
+                                                <?= $userRow["user_status"] == 1 ? 'Deactivate' : 'Activate' ?>
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex flex-wrap gap-2 justify-content-center">
+                                                <a href="view-user.php?user_id=<?= $user_id ?>" class="btn btn-sm btn-info">
+                                                    <i class="fa fa-eye" aria-hidden="true"></i>
                                                 </a>
-                                                &nbsp;
-                                                <a href="edit-user.php?user_id=<?php echo $user_id?>" class="btn btn-warning">
-                                                    <span class="glyphicon glyphicon-pencil"></span>
-                                                    &nbsp;
-                                                    Edit
+                                                <a href="edit-user.php?user_id=<?= $user_id ?>" class="btn btn-sm btn-warning">
+                                                    <i class="fa fa-pencil" aria-hidden="true"></i>
                                                 </a>
-                                                
-                                                &nbsp;
-
-                                                <?php
-                                                if ($userRow["user_status"]==0){
-                                                ?>
-                                                <a href="../controller/user_controller.php?status=activate&user_id=<?php echo $user_id?>" class="btn btn-success">
-                                                    <span class="glyphicon glyphicon-ok"></span>
-                                                    &nbsp;
-                                                    Activate
+                                                <a href="../controller/user_controller.php?status=delete&user_id=<?= $user_id ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure to delete this user?');">
+                                                    <i class="fa fa-trash" aria-hidden="true"></i>
                                                 </a>
-                                                
-                                                &nbsp;
-
-                                                <?php
-                                                }elseif ($userRow["user_status"]==1) {
-
-                                                ?>
-                                                <a href="../controller/user_controller.php?status=deactivate&user_id=<?php echo $user_id?>" class="btn btn-danger">
-                                                    <span class="glyphicon glyphicon-remove"></span>
-                                                    &nbsp;
-                                                    De-activate
-                                                </a>
-                                                &nbsp;
-                                                <?php
-                                                }
-                                                ?>
-                                                <a href="../controller/user_controller.php?status=delete&user_id=<?php echo $user_id?>" class="btn btn-danger">
-                                                    <span class="glyphicon glyphicon-trash"></span>
-                                                    &nbsp;
-                                                    Delete
-                                                </a>
-                                            </td>
-                                        </tr>
-                                <?php
-                                
-                                    }
-                                
-                                ?>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <?php endwhile; ?>
                             </tbody>
+
                         </table>
                     </div>
                 </div>
             </div>
         </div>
-    </body>
-    
-    <script src="../js/datatable/jquery-3.5.1.js"></script>
-    <script src="../js/datatable/jquery.dataTables.min.js"></script>
-    <script src="../js/datatable/dataTables.bootstrap.min.js"></script>
-    <script>
-        $(document).ready(function(){
-            
-            $("#usertable").DataTable();
-        });
-    </script>
-</html>
+    </div>
+</body>
 
+<script src="../js/datatable/jquery-3.5.1.js"></script>
+<script src="../js/datatable/jquery.dataTables.min.js"></script>
+<script src="../js/datatable/dataTables.bootstrap.min.js"></script>
+<script>
+    $(document).ready(function() {
+
+        $("#usertable").DataTable();
+    });
+</script>
+
+</html>

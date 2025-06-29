@@ -1,56 +1,53 @@
 <?php 
 
-// include the library
-
+// Include the FPDF library
 include "../commons/fpdf186/fpdf.php";
 
-$fpdf = new FPDF("p");
+// Create FPDF instance
+$fpdf = new FPDF("P", "mm", "A4");
 
+// Include user model
 include_once '../model/user_model.php';
-$userObj=new User();
-$userResult=$userObj->getAllUsers();
 
+$userObj = new User();
+$userResult = $userObj->getAllUsers();
 
-
-
-$date=date("Y-m-d");
+$date = date("Y-m-d");
 
 // Add Page
-$fpdf-> AddPage("p", "A4");
-$fpdf->SetFont("Arial", "", "18");
-$fpdf ->SetFontSize("18");
-$fpdf->Image("../images/logo1.png", 10, 20,20,20);
+$fpdf->AddPage();
+$fpdf->SetFont("Arial", "", 18);
+$fpdf->Image("../images/logo1.png", 10, 20, 20, 20);
 
-//Page Title
-$fpdf->Cell(0, 30,"USER REPORT",0,1,"C");
-$fpdf ->SetFontSize("12");
-$fpdf->Cell(0, 30,"The System Users as of  $date are as bellow",0,1,"L");
+// Page Title
+$fpdf->Cell(0, 30, "USER REPORT", 0, 1, "C");
 
-//Header
+$fpdf->SetFont("Arial", "", 11);
+$fpdf->Cell(0, 10, "The System Users as of $date are listed below:", 0, 1, "L");
 
-$fpdf->Cell(60, 10, "Name", 1, 0, "C");
-$fpdf->Cell(60, 10, "Email", 1, 0, "C");
-$fpdf->Cell(40, 10, "Status", 1, 1, "C");
+// Set column headers (total width = 190 mm)
+$fpdf->SetFont("Arial", "B", 11);
+$fpdf->Cell(50, 10, "Name", 1, 0, "C");
+$fpdf->Cell(70, 10, "Email", 1, 0, "C");
+$fpdf->Cell(40, 10, "Contact No", 1, 0, "C");
+$fpdf->Cell(30, 10, "Status", 1, 1, "C");
 
-//data
+// Table Data
+$fpdf->SetFont("Arial", "", 11);
 
-while($userRow=$userResult->fetch_assoc())
-{
-$status= ($userRow["user_status"]=='1')?"Active":"Deactive";
-$fpdf->Cell(60, 10, $userRow['user_fname']."". $userRow['user_lname'], 1, 0, "C");
-$fpdf ->SetFontSize("11");
-$fpdf->Cell(60, 10, $userRow['user_email'], 1, 0, "C");
-$fpdf ->SetFontSize("12");
-$fpdf->Cell(40, 10, "$status", 1, 1, "C");
+while ($userRow = $userResult->fetch_assoc()) {
+    $status = ($userRow["user_status"] == '1') ? "Active" : "Deactive";
 
+    $fullName = $userRow['user_fname'] . " " . $userRow['user_lname'];
+
+    $fpdf->Cell(50, 10, $fullName, 1, 0, "C");
+    $fpdf->Cell(70, 10, $userRow['user_email'], 1, 0, "C");
+    $fpdf->Cell(40, 10, $userRow['user_contact'], 1, 0, "C");
+    $fpdf->Cell(30, 10, $status, 1, 1, "C");
 }
 
-
-$fpdf ->SetFontSize("10");
-$fpdf->Cell(0, 10, "This is a computer generated document that does not require a signature", 1, 1, "C");
-
-
-
-
+// Footer
+$fpdf->SetFont("Arial", "I", 10);
+$fpdf->Cell(0, 10, "This is a computer-generated document that does not require a signature.", 1, 1, "C");
 
 $fpdf->Output();

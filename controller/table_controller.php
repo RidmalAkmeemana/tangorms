@@ -1,126 +1,123 @@
 <?php
 include '../commons/session.php';
-include_once '../model/user_model.php';
+include_once '../model/table_model.php';
 include_once '../model/login_model.php';
-include_once '../model/table-model.php';
-
-$tableObj = new RestaurantTable();
 
 if (!isset($_GET["status"])) {
-    ?>
+?>
     <script>
-        window.location = "../view/login.php"; // Or wherever your login page is
+        window.location = "../view/login.php";
     </script>
     <?php
 }
 
 $status = $_GET["status"];
 
-switch ($status) {
-    case "store":
-        // Get the data from the form
-        $table_name = $_POST["table_name"];
-        $room_id = $_POST["room"];
-        $capacity = $_POST["capacity"];
-        $status = $_POST["status"];
-        //$room_layout = $_FILES["room_layout"];
+$tableObj = new Table();
+$loginObj = new Login();
 
-        // Call the addtables() function in the model
-        $tableObj->addtables($table_name, $capacity, $status, $room_id);
-            $msg = "Table '$table_name' added successfully!";
+switch ($status) {
+
+    case "add_table":
+
+        $table_name = $_POST["table_name"];
+        $seat_count = $_POST["seat_count"];
+        $table_status = $_POST["table_status"];
+        $room_id = $_POST["room_id"];
+
+        try {
+            if ($table_name == "") {
+                throw new Exception("Table Name Cannot be Empty");
+            }
+
+            if ($seat_count == "") {
+                throw new Exception("Seat Count Cannot be Empty");
+            }
+
+            if ($table_status == "") {
+                throw new Exception("Status Cannot be Empty");
+            }
+
+            if ($room_id == "") {
+                throw new Exception("Room Cannot be Empty");
+            }
+
+            // Passing data to the addRole() of the Module page
+
+            $table_id = $tableObj->addTable($table_name, $seat_count, $table_status, $room_id);
+
+            $msg = "$table_name Successfully Added !! ";
             $msg = base64_encode($msg);
-            ?>
+    ?>
             <script>
-                window.location = "../view/view-tables.php?msg=<?php echo $msg; ?>"; // Redirect to table list
+                window.location = "../view/view-tables.php?msg=<?php echo $msg; ?>";
             </script>
-            <?php
-      
-        break;
-    case "add_room":
-        
-        try{
-        // Get the data from the form
-        $room_name = $_POST["room_name"];
-        
-        if($room_name==""){
-            throw new Exception("Please Enter Room Name");
-        }
-        
-        $room_layout = $_FILES["room_layout"];
-        
-        if($room_layout['name']==""){
-            throw new Exception("Please attache the room image");
-        }
-        
-        $file_name= time() . "_" . $room_layout["name"];
-        $path = "../images/layouts/$file_name";
-        move_uploaded_file($room_layout["tmp_name"], $path);
-            
-        
-        // Call the addroom() function in the model
-        $tableObj->addRoom($room_name, $file_name);
-            $msg = "Room '$room_name' added successfully!";
-            $msg = base64_encode($msg);
-            ?>
-            <script>
-                window.location = "../view/view-tables.php?msg=<?php echo $msg; ?>"; // Redirect to table list
-            </script>
-            <?php
-        }
-        catch (Exception $ex){
-            
+        <?php
+        } catch (Exception $ex) {
+
             $msg = $ex->getMessage();
             $msg = base64_encode($msg);
-            ?>
+        ?>
             <script>
-                window.location = "../view/addroom.php?msg=<?php echo $msg; ?>";
+                window.location = "../view/add-table.php?msg=<?php echo $msg; ?>";
             </script>
-            <?php
+        <?php
         }
+
+
         break;
-   
+
     case "delete":
-        $table_id = $_GET['table_id'];
-        $tableObj->deleteTable($table_id);
+        $role_id = $_GET['role_id'];
+        $role_id = base64_decode($role_id);
+        $roleObj->deleteRole($role_id);
 
-        $msg = "Table Successfully Deleted !!!";
+        $msg = "Successfully Deleted !!!";
         $msg = base64_encode($msg);
-        ?>
+    ?>
         <script>
-            window.location = "../view/view-tables.php?msg=<?php echo $msg; ?>";
+            window.location = "../view/view-roles.php?msg=<?php echo $msg; ?>";
         </script>
         <?php
         break;
 
-    case "update_room":
-        
-         // Get the data from the form
-        $room_name = $_POST["room_id"];
-        $room_layout = $_FILES["room_layout"];
+    case "update_role":
 
-        // Call the updateroom() function in the model
-        $tableObj->updateRoomLayout($room_id, $room_layout);
-            $msg = "Room '$room_name' Updated successfully!";
+        $role_id = $_POST["role_id"];
+        $role_name = $_POST["role_name"];
+
+        try {
+            if ($role_id == "") {
+                throw new Exception("Role Id Cannot be Empty");
+            }
+            if ($role_name == "") {
+                throw new Exception("Role Name Cannot be Empty");
+            }
+
+            $roleResult = $roleObj->getRole($role_id);
+            $roleRow = $roleResult->fetch_assoc();
+            //update role
+            $roleObj->UpdateRole($role_id, $role_name);
+
+            $msg = "Role Updated Successfully";
             $msg = base64_encode($msg);
-            ?>
-            <script>
-                window.location = "../view/view-tables.php?msg=<?php echo $msg; ?>"; // Redirect to table list
-            </script>
-            <?php
-      
-        break;
-        
-        
-        //update table
-        $tableObj->updateTable($table_id,$table_name, $room_id, $capacity, $status);
-        $msg = "Table Successfully Updated !!!";
-        $msg = base64_encode($msg);
         ?>
-        <script>
-            window.location = "../view/view-tables.php?msg=<?php echo $msg; ?>";
-        </script>
+            <script>
+                window.location = "../view/view-roles.php?msg=<?php echo $msg; ?>";
+            </script>
         <?php
+
+        } catch (Exception $ex) {
+
+            $msg = $ex->getMessage();
+            $msg = base64_encode($msg);
+        ?>
+            <script>
+                window.location = "../view/edit-role.php?msg=<?php echo $msg; ?>";
+            </script>
+<?php
+        }
+
+
         break;
-    
-        
 }

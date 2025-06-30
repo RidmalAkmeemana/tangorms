@@ -5,6 +5,9 @@ include_once '../model/permission_model.php';
 
 checkFunctionPermission($_SERVER['PHP_SELF']);
 
+//get user information from session
+$userrow = $_SESSION["user"];
+
 $permissionObj = new Permission();
 
 $user_id = isset($_GET["user_id"]) ? base64_decode($_GET["user_id"]) : null;

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jun 29, 2025 at 06:58 AM
+-- Generation Time: Jun 29, 2025 at 04:49 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.1.17
 
@@ -53,7 +53,8 @@ INSERT INTO `function` (`function_id`, `function_name`, `function_url`, `module_
 (12, 'Edit Role', 'edit-role.php', 10, 1),
 (13, 'Screen Permission', 'screen-permission.php', 10, 1),
 (14, 'Table Management', 'table.php', 1, 1),
-(15, 'Add Table', 'add-table.php', 1, 1);
+(15, 'Add Table', 'add-table.php', 1, 1),
+(16, 'View All Tables', 'view-tables.php', 1, 1);
 
 -- --------------------------------------------------------
 

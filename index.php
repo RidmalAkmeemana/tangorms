@@ -17,5 +17,3 @@ $url.="/tangorms/view/login.php";
 <script>
     window.location="<?php echo $url; ?>";
 </script>
-
-<?php

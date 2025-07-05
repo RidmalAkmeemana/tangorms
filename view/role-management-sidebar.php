@@ -35,14 +35,16 @@ $accessibleUrls = array_column($accessibleFunctions, 'function_url');
             </a>
         <?php } ?>
 
-         <!-- Home link is always visible -->
-
-         <a href="screen-permission.php" class="list-group-item">
-                <span class="glyphicon glyphicon-user"></span> &nbsp; Screen Permission
+        <?php if (in_array('screen-permission.php', $accessibleUrls)) { ?>
+            <a href="screen-permission.php" class="list-group-item">
+               <span class="glyphicon glyphicon-user"></span> &nbsp; Screen Permission
             </a>
+        <?php } ?>
 
-        <a href="role-report.php" class="list-group-item" target="_blank">
-            <span class="glyphicon glyphicon-book"></span> &nbsp; Generate Role Report
-        </a>
+        <?php if (in_array('role-report.php', $accessibleUrls)) { ?>
+            <a href="role-report.php" class="list-group-item">
+               <span class="glyphicon glyphicon-book"></span> &nbsp; Generate Role Report
+            </a>
+        <?php } ?>
     </ul>
 </div>

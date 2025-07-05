@@ -1,7 +1,7 @@
 <?php
 include '../commons/session.php';
 include_once '../commons/helpers/permission_helper.php';
-include_once '../model/table_model.php';
+include_once '../model/menu_model.php';
 
 checkFunctionPermission($_SERVER['PHP_SELF']);
 
@@ -9,15 +9,15 @@ $userrow = $_SESSION["user"];
 $user_id = $userrow["user_id"];
 
 // Get user roles for dropdown
-$roomObj     = new Table();
-$roomResult  = $roomObj->getAllRooms();
+$menuObj = new Menu();
+$categoryResult = $menuObj->getAllCategory();
 ?>
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
-    <title>Add Table</title>
+    <title>Add Item</title>
     <?php include_once "../includes/bootstrap_css_includes.php"; ?>
     <style>
         body {
@@ -105,13 +105,13 @@ $roomResult  = $roomObj->getAllRooms();
 
 <body>
     <div class="container">
-        <?php $pageName = "TABLE MANAGEMENT";
+        <?php $pageName = "MENU MANAGEMENT";
         include_once "../includes/header_row_includes.php"; ?>
 
         <div class="row">
-            <?php require 'table-management-sidebar.php'; ?>
+            <?php require 'menu-management-sidebar.php'; ?>
 
-            <form class="col-md-9" action="../controller/table_controller.php?status=add_table" method="post" enctype="multipart/form-data">
+            <form class="col-md-9" action="../controller/menu_controller.php?status=add_item" method="post" enctype="multipart/form-data">
                 <?php if (isset($_GET['msg'])): ?>
                     <div class="row">
                         <div class="col-md-8 col-md-offset-2 alert alert-danger text-center">
@@ -120,52 +120,49 @@ $roomResult  = $roomObj->getAllRooms();
                     </div>
                 <?php endif; ?>
 
-                <!-- Table Name & Capacity -->
+                <!-- Item Image & Name -->
                 <div class="row mt-3">
-                    <div class="col-md-2"><label class="control-label">Table Name</label> <label class="text-danger">*</label></div>
-                    <div class="col-md-4"><input type="text" class="form-control" name="table_name" id="table_name" required /></div>
-                    <div class="col-md-2"><label class="control-label">Seat Count</label> <label class="text-danger">*</label></div>
-                    <div class="col-md-4"><input type="number" class="form-control" name="seat_count" id="seat_count" required /></div>
+                    <div class="col-md-2"><label class="control-label">Item Name</label><label class="text-danger">*</label></div>
+                    <div class="col-md-4"><input type="text" class="form-control" name="item_name" id="item_name" required /></div>
+                    <div class="col-md-2"><label class="control-label">Item Description</label><label class="text-danger">*</label></div>
+                    <div class="col-md-4"><textarea type="text" class="form-control" name="item_description" id="item_description" required></textarea></div>
                 </div>
 
-                <!-- Table Status -->
                 <div class="row mt-3">
-                    <div class="col-md-2"><label class="control-label">Table Status</label> <label class="text-danger">*</label></div>
-                    <div class="col-md-4">
-                        <select name="table_status" id="table_status" class="form-control" required>
-                            <option value="">---Select Table Status---</option>
-                            <option value="Vacant">Vacant</option>
-                            <option value="Out of Service">Out of Service</option>
-                            <option value="Reserved">Reserved</option>
-                            <option value="Seated">Seated</option>
-                            <option value="Dirty">Dirty</option>
-                        </select>
-                    </div>
-
-                    <div class="col-md-2"><label class="control-label">Room</label> <label class="text-danger">*</label></div>
-                    <div class="col-md-4">
-                        <select name="room_id" id="room_id" class="form-control" required>
-                            <option value="">---Select Room---</option>
-                            <?php while ($roomRow = $roomResult->fetch_assoc()): ?>
-                                <option value="<?= $roomRow['room_id']; ?>"><?= $roomRow['room_name']; ?></option>
+                    <div class="col-md-2"><label class="control-label">Unit Price</label><label class="text-danger">*</label></div>
+                    <div class="col-md-4"><input type="number" class="form-control" name="item_price" id="item_price" required /></div>
+                    <div class="col-md-2"><label class="control-label">Item Category</label><label class="text-danger">*</label></div>
+                    <div class="col-md-4"><select name="item_category" id="item_category" class="form-control" required>
+                            <option value="">---Select Category---</option>
+                            <?php while ($categoryRow = $categoryResult->fetch_assoc()): ?>
+                                <option value="<?= $categoryRow['category_id']; ?>"><?= $categoryRow['category_name']; ?></option>
                             <?php endwhile; ?>
                         </select>
                     </div>
                 </div>
-                <!-- Dynamic Functions Placeholder -->
-                <div class="row mt-3">
-                    <div id="display_functions" class="col-md-12"></div>
-                </div>
 
-                <!-- Submit / Reset Buttons -->
-                <div class="row mt-4">
-                    <div class="col-md-12 text-center">
-                        <input type="submit" class="btn btn-primary" value="Submit" />
-                        <input type="reset" class="btn btn-danger" value="Reset" />
-                    </div>
+                <div class="row mt-3">
+                    <div class="col-md-2"><label class="control-label">Qty</label><label class="text-danger">*</label></div>
+                    <div class="col-md-4"><input type="number" class="form-control" name="item_qty" id="item_qty" required /></div>
+                    <div class="col-md-2"><label class="control-label">Item Image</label><label class="text-danger">*</label></div>
+                    <div class="col-md-4"><input type="file" class="form-control" name="item_image" id="item_image" onchange="displayImage(this);" required /></div>
                 </div>
         </div>
-        </form>
+
+        <!-- Dynamic Functions Placeholder -->
+        <div class="row mt-3">
+            <div id="display_functions" class="col-md-12"></div>
+        </div>
+
+        <!-- Submit / Reset Buttons -->
+        <div class="row mt-4">
+            <div class="col-md-12 text-center">
+                <input type="submit" class="btn btn-primary" value="Submit" />
+                <input type="reset" class="btn btn-danger" value="Reset" />
+            </div>
+        </div>
+    </div>
+    </form>
     </div>
 
     <script src="../js/jquery-3.7.1.js"></script>

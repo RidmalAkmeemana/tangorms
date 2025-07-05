@@ -1,294 +1,163 @@
 <?php
-
 include '../commons/session.php';
-include_once '../model/table-model.php';
+include_once '../model/table_model.php';
+include_once '../commons/helpers/permission_helper.php';
 
-//get user information from session
-$userrow = $_SESSION["user"];
+checkFunctionPermission($_SERVER['PHP_SELF']);
 
-$tableObj = new RestaurantTable();
+$tableObj = new Table();
+$roomObj = new Table(); // assuming getAllRooms is also in Table class
 
-$table_id = $_GET["table_id"];
+if (!isset($_GET["table_id"])) {
+    die("Invalid request.");
+}
 
-
+$table_id = base64_decode($_GET["table_id"]);
 $tableResult = $tableObj->getTable($table_id);
-
 $tableRow = $tableResult->fetch_assoc();
-
-$roomResult = $tableObj->getAllRooms();
-$roomStatus = $tableObj->getAllStatus();
-
+$roomResult  = $roomObj->getAllRooms();
 ?>
 
-
 <html>
-    <head>
-        <?php include_once "../includes/bootstrap_css_includes.php"?>
-        <style>
-    body {
-        background-color: #5c5b5b;
-        color: white;
-        font-family: 'Segoe UI', sans-serif;
-    }
+<head>
+    <?php include_once "../includes/bootstrap_css_includes.php" ?>
+    <style>
+        body {
+            background-color: #5c5b5b;
+            color: white;
+            font-family: 'Segoe UI', sans-serif;
+        }
 
-    a {
-        text-decoration: none;
-        color: inherit;
-    }
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
 
-    .list-group-item {
-        background-color: #ffffff;
-        border: 1px solid #FF6600;
-        color: #333;
-        font-weight: 500;
-        transition: background-color 0.3s ease, color 0.3s ease;
-    }
+        .list-group-item {
+            background-color: #ffffff;
+            border: 1px solid #FF6600;
+            color: #333;
+            font-weight: 500;
+        }
 
-    .list-group-item:hover {
-        background-color: #FF6600;
-        color: white;
-    }
+        .list-group-item:hover {
+            background-color: #FF6600;
+            color: white;
+        }
 
-    .panel {
-        background-color: #faf7f7;
-        border: 1px solid #FF6600;
-        color: #333;
-        box-shadow: 0 0 10px rgba(255, 102, 0, 0.3);
-    }
+        .container {
+            padding-top: 30px;
+        }
 
-    .panel-info > .panel-heading {
-        background-color: #FF6600;
-        color: white;
-        font-weight: bold;
-        text-align: center;
-    }
+        label.control-label {
+            color: white;
+            font-weight: 500;
+        }
 
-    .panel-body {
-        background-color: #faf7f7;
-        text-align: center;
-    }
+        input.form-control,
+        select.form-control {
+            background-color: #f5f5f5;
+            border: 1px solid #ccc;
+            color: #333;
+        }
 
-    .h1 {
-        color: #FF6600;
-        font-size: 48px;
-    }
+        input.form-control:focus,
+        select.form-control:focus {
+            border-color: #FF6600;
+            box-shadow: 0 0 5px rgba(255, 102, 0, 0.6);
+        }
 
-    .container {
-        padding-top: 30px;
-    }
+        .btn-danger {
+            background-color: #aa3333;
+            border-color: #aa3333;
+        }
 
-    ul.list-group {
-        margin-top: 20px;
-    }
+        .btn-danger:hover {
+            background-color: #992222;
+            border-color: #992222;
+        }
 
-    .col-md-3, .col-md-9 {
-        margin-top: 20px;
-    }
+        .mt-3 {
+            margin-top: 1rem;
+        }
+    </style>
+</head>
 
-    /* Form Controls */
-    label.control-label, label.control-lebel {
-        color: white;
-        font-weight: 500;
-    }
+<body>
+<div class="container">
+    <?php $pageName = "USER MANAGEMENT"; ?>
+    <?php include_once "../includes/header_row_includes.php"; ?>
+    <?php require 'table-management-sidebar.php'; ?>
 
-    input.form-control,
-    select.form-control {
-        background-color: #f5f5f5;
-        border: 1px solid #ccc;
-        color: #333;
-    }
+    <form action="../controller/table_controller.php?status=update_table" method="post" enctype="multipart/form-data">
+        <div class="col-md-9">
 
-    input.form-control:focus,
-    select.form-control:focus {
-        border-color: #FF6600;
-        box-shadow: 0 0 5px rgba(255, 102, 0, 0.6);
-    }
+            <!-- Message Row -->
+            <?php if (isset($_GET['msg'])): ?>
+                <div class="row form-section">
+                    <div class="col-md-12 alert alert-danger text-center">
+                        <?= base64_decode($_GET['msg']); ?>
+                    </div>
+                </div>
+            <?php endif; ?>
 
-    .btn-primary {
-        background-color: #FF6600;
-        border-color: #FF6600;
-    }
+            <!-- Table Name & Capacity -->
+            <div class="row mt-3">
+                <input type="hidden" name="table_id" value="<?= $tableRow['table_id']; ?>">
+                <div class="col-md-2"><label class="control-label">Table Name</label> <label class="text-danger">*</label></div>
+                <div class="col-md-4">
+                    <input type="text" class="form-control" name="table_name" id="table_name"
+                           value="<?= htmlspecialchars($tableRow["table_name"]); ?>" required />
+                </div>
 
-    .btn-primary:hover {
-        background-color: #e55d00;
-        border-color: #e55d00;
-    }
-
-    .btn-danger {
-        background-color: #aa3333;
-        border-color: #aa3333;
-    }
-
-    .btn-danger:hover {
-        background-color: #992222;
-        border-color: #992222;
-    }
-
-    #img_prev {
-        border: 1px solid #ccc;
-        padding: 2px;
-        margin-top: 5px;
-        border-radius: 4px;
-    }
-</style>
-
-    </head>
-    <body>
-        <div class="container">
-            <?php $pageName = "Edit Table" ?>
-            <?php include_once "../includes/header_row_includes.php"; ?>
-
-            <div class="col-md-3">
-                <ul class="list-group">
-                    <a href="addroom.php"class="list-group-item">
-                        <span class="glyphicon glyphicon-plus"></span> &nbsp;
-                        Add Room
-                    </a>
-                    <a href="edittable.php"class="list-group-item">
-                        <span class="glyphicon glyphicon-book"></span> &nbsp;
-                        Edit Table
-                    </a>
-                    <a href="editroom.php"class="list-group-item">
-                        <span class="glyphicon glyphicon-book"></span> &nbsp;
-                        Edit Room
-                    </a>
-                </ul>
+                <div class="col-md-2"><label class="control-label">Capacity</label> <label class="text-danger">*</label></div>
+                <div class="col-md-4">
+                    <input type="number" class="form-control" name="seat_count" id="seat_count"
+                           value="<?= htmlspecialchars($tableRow["seat_count"]); ?>" required />
+                </div>
             </div>
-            <form action="../controller/table_controller.php?status=update_table" method="post" enctype="multipart/form-data">
-                <div class = "col-md-9">
-                   
-                <div class="row">
-                    <div class="col-md-3">
-                        <label class="control-label">Table Name </label>
-                       
-                    </div>
-                    <div class="col-md-3">
-                        <input type="text" class = "form-control" name = "table_name" id="table_name" value="<?php echo $tableRow["table_name"];?>"/>
-                        <input type="hidden" name="table_id" value="<?php echo $table_id;?>" />
-                    </div>
+
+            <!-- Table Status & Room -->
+            <div class="row mt-3">
+                <div class="col-md-2"><label class="control-label">Table Status</label> <label class="text-danger">*</label></div>
+                <div class="col-md-4">
+                    <select name="table_status" id="table_status" class="form-control" required>
+                        <option value="">---Select Table Status---</option>
+                        <?php
+                        $statuses = ['Vacant', 'Reserved', 'Seated', 'Dirty', 'Out of Service'];
+                        foreach ($statuses as $status) {
+                            $selected = ($tableRow["table_status"] == $status) ? "selected" : "";
+                            echo "<option value=\"$status\" $selected>$status</option>";
+                        }
+                        ?>
+                    </select>
                 </div>
 
-                <div class="row">
-                    <div class="col-md-3">
-                        <label class="control-label">Capacity</label>
-                    </div>
-                    <div class="col-md-3">
-                        <input type="number" class="form-control" name="capacity" id="capacity" min="1" max="20"
-                            value="<?php echo $tableRow["capacity"] ?>" required="required"/>
-                    </div>
+                <div class="col-md-2"><label class="control-label">Room</label> <label class="text-danger">*</label></div>
+                <div class="col-md-4">
+                    <select name="room_id" id="room_id" class="form-control" required>
+                        <option value="">---Select Room---</option>
+                        <?php while ($roomRow = $roomResult->fetch_assoc()): ?>
+                            <option value="<?= $roomRow["room_id"]; ?>" <?= ($roomRow["room_id"] == $tableRow["room_id"]) ? "selected" : "" ?>>
+                                <?= htmlspecialchars($roomRow["room_name"]); ?>
+                            </option>
+                        <?php endwhile; ?>
+                    </select>
                 </div>
-             
-                   <div class="row">
-                    <div class="col-md-3">
-                        <label class="control-label">Room</label>
-                    </div>
-                      <div class="row">
-                   
-                      <div class="col-md-3">
-                        <select name="room" id="room" class="form-control" required="required">
-                            <option>----------------</option>
-                            <?php 
-                                    while($roomRow=$roomResult->fetch_assoc())
-                                    {
-                                ?>
-                                <option value="<?php echo $roomRow["room_id"]; ?>"
-                                        
-                                        <?php
-                                            
-                                            if($roomRow['room_id']==$tableRow['room_id']){
-                                        ?>
-                                        
-                                        selected
-                                        
-                                        <?php
-                                            }
-
-                                        ?>
-                                        
-                                        >
-                                    <?php echo $roomRow['room_name'];?>
-                                </option>
-                                <?php
-                                    }
-                                ?>
-                        </select>
-                    </div>  
-                  </div>
-                    
-                    <div class="col-md-3">
-                            <label class="control-label">Update Room Layout</label>
-                        </div>
-                        <div class="col-md-3">
-                            <input type="file" class="form-control" name="room_layout" id="room_layout"  onchange="displayImage(this);"/>
-                            <br/>
-  
-                            <img id="img_prev" style=""/>
-                        </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-3">
-                        <label class="control-label">Status</label>
-                    </div>
-                    <div class="col-md-3">
-                        <select name="status" id="status" class="form-control" required="required">
-                            
-                            <?php 
-                                    while($statusRow=$roomStatus->fetch_assoc())
-                                    {
-                            ?>
-                                    
-                                <option value="<?php echo $statusRow["status_id"]; ?>"
-                                     
-                                    <?php
-                                     if($statusRow["status_id"] == $tableRow['status_id']){   
-                                     ?>   
-                                        selected
-                                      <?php
-                                     }   
-                                     ?>   
-                
-                                >
-                                    <?php echo $statusRow["status_name"];?>
-                                </option>
-                                <?php
-                                    }
-                                ?>
-                        </select>
-                    </div>
-                </div>
-    
-                <div class="row">
-                   &nbsp;
-                </div>
-                <div class="row">
-                    <div class="col-md-offset-3 col-md-6">
-                        <input type="submit" class="btn btn-primary" value="Submit"/>
-                        <input type="reset" class="btn btn-danger" value="Reset"/>
-                    </div>
-                </div>   
             </div>
-        </form>
-        
-    </div>
 
+            <!-- Submit Buttons -->
+            <div class="row mt-3 text-center">
+                <div class="col-md-12">
+                    <input type="submit" class="btn btn-primary" value="Submit">
+                    <input type="reset" class="btn btn-danger" value="Reset">
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
 
-</body>
 <script src="../js/jquery-3.7.1.js"></script>
 <script src="../js/uservalidation.js"></script>
-<script>
-    function displayImage(input){
-        if(input.files && input.files[0])
-        {
-           var reader = new FileReader();
-           reader.onload = function (e){
-           $("#img_prev").attr('src',e.target.result).width(80).height(60);
-               
-           };
-           reader.readAsDataURL(input.files[0]);
-        }
-    }
-</script>
+</body>
 </html>
-
-

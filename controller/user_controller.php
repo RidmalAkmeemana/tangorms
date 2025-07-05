@@ -118,22 +118,46 @@ switch ($status) {
         <script>
             window.location = "../view/view-users.php?msg=<?php echo $msg; ?>";
         </script>
-    <?php
+        <?php
         break;
 
     case "delete":
-        $user_id = $_GET['user_id'];
-        $user_id = base64_decode($user_id);
+        $user_id = isset($_GET['user_id']) ? base64_decode($_GET['user_id']) : null;
+
+        if (!isset($_SESSION['user'])) {
+            echo "<script>alert('Unauthorized access!'); window.location.href = '../view/login.php';</script>";
+            exit;
+        }
+
+        include_once '../model/user_model.php';
+        $current_user_id = $_SESSION['user']['user_id'];
+        $userObjCheck = new User();
+        $accessibleFunctions = $userObjCheck->getAccessibleFunctionsWithModule($current_user_id);
+
+        $hasDeletePermission = false;
+
+        foreach ($accessibleFunctions as $func) {
+            if (
+                strtolower($func['function_url']) === 'user_controller.php' &&
+                (int)$func['function_id'] === 6 // Delete User
+            ) {
+                $hasDeletePermission = true;
+                break;
+            }
+        }
+
+        if (!$hasDeletePermission) {
+            echo "<script>alert('Access Denied!'); window.location.href = '../view/dashboard.php';</script>";
+            exit;
+        }
+
+        // Delete the user
         $userObj->deleteUser($user_id);
 
-        $msg = "Successfully Deleted !!!";
-        $msg = base64_encode($msg);
-    ?>
-        <script>
-            window.location = "../view/view-users.php?msg=<?php echo $msg; ?>";
-        </script>
-        <?php
+        $msg = base64_encode("Successfully Deleted !!!");
+        echo "<script>window.location.href = '../view/view-users.php?msg=$msg';</script>";
         break;
+
 
     case "update_user":
 

@@ -81,29 +81,41 @@ switch ($status) {
         <?php
         break;
 
-    case "update_role":
+    case "update_table":
 
-        $role_id = $_POST["role_id"];
-        $role_name = $_POST["role_name"];
+        $table_id = $_POST["table_id"];
+        $table_name = $_POST["table_name"];
+        $seat_count = $_POST["seat_count"];
+        $table_status = $_POST["table_status"];
+        $room_id = $_POST["room_id"];
 
         try {
-            if ($role_id == "") {
-                throw new Exception("Role Id Cannot be Empty");
+            if ($table_id == "") {
+                throw new Exception("Table Id Cannot be Empty");
             }
-            if ($role_name == "") {
-                throw new Exception("Role Name Cannot be Empty");
+            if ($table_name == "") {
+                throw new Exception("Table Name Cannot be Empty");
+            }
+            if ($seat_count == "") {
+                throw new Exception("Capacity Cannot be Empty");
+            }
+            if ($table_status == "") {
+                throw new Exception("Table Status Cannot be Empty");
+            }
+            if ($room_id == "") {
+                throw new Exception("Room Cannot be Empty");
             }
 
-            $roleResult = $roleObj->getRole($role_id);
-            $roleRow = $roleResult->fetch_assoc();
-            //update role
-            $roleObj->UpdateRole($role_id, $role_name);
+            $tableResult = $tableObj->getTable($table_id);
+            $tableRow = $tableResult->fetch_assoc();
+            //update table
+            $tableObj->UpdateTable($table_id, $table_name, $seat_count, $table_status, $room_id);
 
-            $msg = "Role Updated Successfully";
+            $msg = "Table Updated Successfully";
             $msg = base64_encode($msg);
         ?>
             <script>
-                window.location = "../view/view-roles.php?msg=<?php echo $msg; ?>";
+                window.location = "../view/view-tables.php?msg=<?php echo $msg; ?>";
             </script>
         <?php
 
@@ -113,7 +125,7 @@ switch ($status) {
             $msg = base64_encode($msg);
         ?>
             <script>
-                window.location = "../view/edit-role.php?msg=<?php echo $msg; ?>";
+                window.location = "../view/edit-table.php?msg=<?php echo $msg; ?>";
             </script>
 <?php
         }

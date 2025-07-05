@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jun 29, 2025 at 04:49 PM
+-- Generation Time: Jul 05, 2025 at 05:28 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.1.17
 
@@ -20,6 +20,29 @@ SET time_zone = "+00:00";
 --
 -- Database: `tango_restaurant_management_db`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `categories`
+--
+
+CREATE TABLE `categories` (
+  `category_id` int(11) NOT NULL,
+  `category_name` varchar(100) NOT NULL,
+  `category_status` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `categories`
+--
+
+INSERT INTO `categories` (`category_id`, `category_name`, `category_status`) VALUES
+(1, 'Breackfast', 1),
+(2, 'Lunch', 1),
+(3, 'Dinner', 1),
+(5, 'Test2', -1),
+(6, 'Test', 1);
 
 -- --------------------------------------------------------
 
@@ -54,7 +77,55 @@ INSERT INTO `function` (`function_id`, `function_name`, `function_url`, `module_
 (13, 'Screen Permission', 'screen-permission.php', 10, 1),
 (14, 'Table Management', 'table.php', 1, 1),
 (15, 'Add Table', 'add-table.php', 1, 1),
-(16, 'View All Tables', 'view-tables.php', 1, 1);
+(16, 'View All Tables', 'view-tables.php', 1, 1),
+(17, 'User Report', 'user-report.php', 5, 1),
+(18, 'Role Report', 'role-report.php', 10, 1),
+(19, 'Edit Table', 'edit-table.php', 1, 1),
+(20, 'Table Report', 'table-report.php', 1, 1),
+(21, 'Add Room', 'add-room.php', 1, 1),
+(22, 'View All Rooms', 'view-rooms.php', 1, 1),
+(23, 'Room Report', 'room-report.php', 1, 1),
+(24, 'View Room', 'view-room.php', 1, 1),
+(25, 'Edit Room', 'edit-room.php', 1, 1),
+(26, 'Room Delete', 'room_controller.php', 1, 1),
+(27, 'Food Menu Management', 'menu.php', 3, 1),
+(28, 'Add Category', 'add-category.php', 3, 1),
+(29, 'View All Categories', 'view-categories.php', 3, 1),
+(30, 'Edit Category', 'edit-category.php', 3, 1),
+(32, 'Category Report', 'category-report.php', 3, 1),
+(33, 'View Category', 'view-category.php', 3, 1),
+(34, 'Category Delete', 'menu_controller.php', 3, 1),
+(89, 'Add Item', 'add-item.php', 3, 1),
+(90, 'View All Items', 'view-items.php', 3, 1),
+(91, 'View Item', 'view-item.php', 3, 1),
+(92, 'Edit Item', 'edit-item.php', 3, 1),
+(93, 'Item Delete', 'menu_controller.php', 3, 1),
+(94, 'Item Report', 'item-report.php', 3, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `item`
+--
+
+CREATE TABLE `item` (
+  `item_id` int(11) NOT NULL,
+  `item_name` varchar(255) NOT NULL,
+  `item_description` text DEFAULT NULL,
+  `item_price` decimal(10,2) NOT NULL,
+  `item_category` int(100) DEFAULT NULL,
+  `item_image` varchar(255) DEFAULT NULL,
+  `item_qty` int(1) DEFAULT 1,
+  `item_status` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `item`
+--
+
+INSERT INTO `item` (`item_id`, `item_name`, `item_description`, `item_price`, `item_category`, `item_image`, `item_qty`, `item_status`) VALUES
+(1, 'Bread', 'Bread', 200.00, 1, 'Bread.jpg', 10, 1),
+(5, 'Rice', 'Rice', 500.00, 2, '1751566305_', 22, 1);
 
 -- --------------------------------------------------------
 
@@ -85,22 +156,6 @@ INSERT INTO `login` (`login_id`, `login_username`, `login_password`, `login_stat
 (33, 'Sula@gmail.com', '1f731b831686ed3c3ab9cc9768dc5222ca54bd68', 1, 56),
 (34, 'ridmal@gmail.com', 'e10adc3949ba59abbe56e057f20f883e', 1, 49),
 (35, 'rajeewaakmeemana@gmail.com', 'c78e33f4b229277d86e3b8b252f9ea7a9651a270', 1, 57);
-
--- --------------------------------------------------------
-
---
--- Table structure for table `menu_item`
---
-
-CREATE TABLE `menu_item` (
-  `menu_item_id` int(11) NOT NULL,
-  `item_name` varchar(255) NOT NULL,
-  `item_description` text DEFAULT NULL,
-  `item_price` decimal(10,2) NOT NULL,
-  `item_category` varchar(100) DEFAULT NULL,
-  `item_image` varchar(255) DEFAULT NULL,
-  `item_available` tinyint(1) DEFAULT 1
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -222,7 +277,8 @@ INSERT INTO `role` (`role_id`, `role_name`, `role_status`) VALUES
 (3, 'Staff', 1),
 (4, 'Data Entry Clerk', 1),
 (5, 'Delivery Rider', 1),
-(8, 'Test', -1);
+(8, 'Test', -1),
+(9, 'Test', -1);
 
 -- --------------------------------------------------------
 
@@ -253,7 +309,43 @@ INSERT INTO `role_function` (`role_id`, `function_id`) VALUES
 (1, 12),
 (1, 13),
 (1, 14),
-(1, 15);
+(1, 15),
+(1, 16),
+(1, 17),
+(1, 18),
+(1, 19),
+(1, 20),
+(1, 21),
+(1, 22),
+(1, 23),
+(1, 24),
+(1, 25),
+(1, 26),
+(1, 27),
+(1, 28),
+(1, 29),
+(1, 30),
+(1, 32),
+(1, 33),
+(1, 34),
+(1, 89),
+(1, 90),
+(1, 91),
+(1, 92),
+(1, 93),
+(1, 94),
+(2, 1),
+(2, 2),
+(2, 3),
+(2, 4),
+(2, 5),
+(2, 8),
+(2, 9),
+(2, 10),
+(2, 12),
+(2, 14),
+(2, 15),
+(2, 16);
 
 -- --------------------------------------------------------
 
@@ -272,8 +364,12 @@ CREATE TABLE `role_module` (
 
 INSERT INTO `role_module` (`role_id`, `module_id`) VALUES
 (1, 1),
+(1, 3),
 (1, 5),
-(1, 10);
+(1, 10),
+(2, 1),
+(2, 5),
+(2, 10);
 
 -- --------------------------------------------------------
 
@@ -284,20 +380,22 @@ INSERT INTO `role_module` (`role_id`, `module_id`) VALUES
 CREATE TABLE `room` (
   `room_id` int(10) NOT NULL,
   `room_name` varchar(100) NOT NULL,
-  `room_layout` varchar(255) DEFAULT NULL
+  `room_layout` varchar(255) DEFAULT NULL,
+  `room_status` int(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `room`
 --
 
-INSERT INTO `room` (`room_id`, `room_name`, `room_layout`) VALUES
-(1, 'PDR 1', 'pdr1.png'),
-(2, 'PDR 2', 'pdr2.png'),
-(3, 'PDR 3', 'pdr3.png'),
-(4, 'Main Dining Area', 'mda.png'),
-(5, 'Outdoor Dining Area', 'oda.png'),
-(6, 'Bar & Grill Area\r\n', 'bga.png');
+INSERT INTO `room` (`room_id`, `room_name`, `room_layout`, `room_status`) VALUES
+(1, 'PDR 1', 'pdr1.png', 1),
+(2, 'PDR 2', 'pdr2.png', 1),
+(3, 'PDR 3', 'pdr3.png', 1),
+(4, 'Main Dining Area', 'mda.png', 1),
+(5, 'Outdoor Dining Area', 'oda.png', 1),
+(6, 'Bar & Grill Area\r\n', 'bga.png', 1),
+(17, 'Balcony Area', '1751444636_images.jpeg', 1);
 
 -- --------------------------------------------------------
 
@@ -320,10 +418,14 @@ CREATE TABLE `table` (
 INSERT INTO `table` (`table_id`, `table_name`, `seat_count`, `table_status`, `room_id`) VALUES
 (7, 'RM1T1', 4, 'Vacant', 1),
 (8, 'RM1T2', 4, 'Out of Service', 1),
-(9, 'RM1T3', 4, 'Reserved', 1),
-(10, 'RM1T4', 4, 'Seated', 1),
-(11, 'RM1T5', 4, 'Dirty', 1),
-(12, 'RM1T6', 4, 'Vacant', 1);
+(9, 'RM1T3', 0, 'Vacant', 1),
+(10, 'RM1T4', 1, 'Dirty', 3),
+(11, 'RM1T5', 4, 'Reserved', 1),
+(12, 'RM1T6', 4, 'Seated', 1),
+(13, 'RM1T7', 2, 'Reserved', 3),
+(14, 'Testqq', 2, 'Vacant', 15),
+(15, 'BTBL1', 4, 'Vacant', 17),
+(16, 'BTBL2', 2, 'Reserved', 17);
 
 -- --------------------------------------------------------
 
@@ -366,17 +468,24 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`user_id`, `user_fname`, `user_lname`, `user_email`, `user_password`, `user_dob`, `user_nic`, `user_image`, `user_role`, `user_status`, `user_contact`) VALUES
-(49, 'Kamal', 'Perera', 'kamal@esoft.lk', '202cb962ac59075b964b07152d234b70', '2025-04-06', '605120458V', '1751128958_3d-cartoon-baby-genius-photo.jpg', 2, 1, '0773456060'),
+(49, 'Kamal', 'Perera', 'kamal@esoft.lk', '202cb962ac59075b964b07152d234b70', '2025-04-06', '605120458V', '1751265171_3d-cartoon-baby-genius-photo.jpg', 2, 1, '0773456060'),
 (57, 'Ridmal', 'Akmeemana', 'rajeewaakmeemana@gmail.com', '202cb962ac59075b964b07152d234b70', '1998-09-22', '982660203V', '', 1, 1, '0773697070'),
 (61, 'Miranga', 'Senarathna', 'miranga@sits.lk', '866c7ee013c58f01fa153a8d32c9ed57', '2025-06-24', '881441756V', '1750873659_3d-cartoon-baby-genius-photo.jpg', 2, 1, '0773697070'),
 (62, 'Anusha', 'Perera', 'anusha@gmail.com', '202cb962ac59075b964b07152d234b70', '2025-06-26', '963133223V', '1750958069_images (1).jpeg', 1, -1, '0773698080'),
 (63, 'Janaka', 'Rathnayaka', 'janaka@gmail.com', '202cb962ac59075b964b07152d234b70', '2025-06-19', '963133223V', '', 2, -1, '0773697070'),
-(64, 'Miranga', 'Perera', 'miranga@sis.lk', '81dc9bdb52d04dc20036dbd8313ed055', '2025-06-26', '956182015V', '1751016923_images (1).jpeg', 2, 1, '0773697070'),
-(65, 'Test', 'Senarathna', 'test@gmail.com', '202cb962ac59075b964b07152d234b70', '2025-06-26', '963133223V', '1751091914_3d-cartoon-baby-genius-photo.jpg', 1, -1, '0773698080');
+(64, 'Miranga', 'Perera', 'miranga@sis.lk', '81dc9bdb52d04dc20036dbd8313ed055', '2025-06-26', '956182015V', '1751016923_images (1).jpeg', 2, -1, '0773697070'),
+(65, 'Test', 'Senarathna', 'test@gmail.com', '202cb962ac59075b964b07152d234b70', '2025-06-26', '963133223V', '1751091914_3d-cartoon-baby-genius-photo.jpg', 1, -1, '0773698080'),
+(66, 'Test', 'Perera', 'test@gmail.com', '202cb962ac59075b964b07152d234b70', '2025-06-30', '956182015V', '', 1, -1, '0773698080');
 
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `categories`
+--
+ALTER TABLE `categories`
+  ADD PRIMARY KEY (`category_id`);
 
 --
 -- Indexes for table `function`
@@ -385,17 +494,17 @@ ALTER TABLE `function`
   ADD PRIMARY KEY (`function_id`);
 
 --
+-- Indexes for table `item`
+--
+ALTER TABLE `item`
+  ADD PRIMARY KEY (`item_id`);
+
+--
 -- Indexes for table `login`
 --
 ALTER TABLE `login`
   ADD PRIMARY KEY (`login_id`),
   ADD UNIQUE KEY `login_username` (`login_username`);
-
---
--- Indexes for table `menu_item`
---
-ALTER TABLE `menu_item`
-  ADD PRIMARY KEY (`menu_item_id`);
 
 --
 -- Indexes for table `module`
@@ -471,22 +580,28 @@ ALTER TABLE `user`
 --
 
 --
+-- AUTO_INCREMENT for table `categories`
+--
+ALTER TABLE `categories`
+  MODIFY `category_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
 -- AUTO_INCREMENT for table `function`
 --
 ALTER TABLE `function`
-  MODIFY `function_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=89;
+  MODIFY `function_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=95;
+
+--
+-- AUTO_INCREMENT for table `item`
+--
+ALTER TABLE `item`
+  MODIFY `item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `login`
 --
 ALTER TABLE `login`
   MODIFY `login_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
-
---
--- AUTO_INCREMENT for table `menu_item`
---
-ALTER TABLE `menu_item`
-  MODIFY `menu_item_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `module`
@@ -516,19 +631,19 @@ ALTER TABLE `restaurant_table`
 -- AUTO_INCREMENT for table `role`
 --
 ALTER TABLE `role`
-  MODIFY `role_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `role_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `room`
 --
 ALTER TABLE `room`
-  MODIFY `room_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `room_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `table`
 --
 ALTER TABLE `table`
-  MODIFY `table_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `table_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `table_activity_log`
@@ -540,7 +655,7 @@ ALTER TABLE `table_activity_log`
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=66;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=67;
 
 --
 -- Constraints for dumped tables

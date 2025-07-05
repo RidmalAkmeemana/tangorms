@@ -16,12 +16,6 @@ $user_id = base64_decode($_GET["user_id"]);
 $userResult = $userObj->getUser($user_id);
 $userdetailrow = $userResult->fetch_assoc();
 
-// Get functions
-// $functionArray = [];
-// $userFunctionResult = $userObj->getUserFunctions($user_id);
-// while ($fun_row = $userFunctionResult->fetch_assoc()) {
-//     $functionArray[] = $fun_row["function_id"];
-// }
 ?>
 
 <html>
@@ -128,10 +122,6 @@ $userdetailrow = $userResult->fetch_assoc();
         <?php require 'user-management-sidebar.php'; ?>
 
         <div class="col-md-9">
-            <a href="view-users.php" class="btn btn-secondary mb-3">
-                <i class="fa fa-arrow-left" aria-hidden="true"></i> Back
-            </a>
-
             <?php if (isset($_GET["msg"])): ?>
                 <div class="alert alert-success">
                     <?= base64_decode($_GET["msg"]); ?>

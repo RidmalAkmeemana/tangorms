@@ -84,18 +84,58 @@ switch ($status) {
         break;
 
     case "delete":
-        $role_id = $_GET['role_id'];
-        $role_id = base64_decode($role_id);
-        $roleObj->deleteRole($role_id);
+    if (!isset($_SESSION['user'])) {
+        echo "<script>alert('Unauthorized access!'); window.location.href = '../view/login.php';</script>";
+        exit;
+    }
 
-        $msg = "Successfully Deleted !!!";
-        $msg = base64_encode($msg);
-    ?>
-        <script>
-            window.location = "../view/view-roles.php?msg=<?php echo $msg; ?>";
-        </script>
-        <?php
-        break;
+    if (!isset($_GET['role_id'])) {
+        echo "<script>alert('Missing role ID!'); window.location.href = '../view/view-roles.php';</script>";
+        exit;
+    }
+
+    $role_id = base64_decode($_GET['role_id']);
+
+    // Get current logged-in user ID
+    $current_user_id = $_SESSION['user']['user_id'];
+
+    // Check permission
+    include_once '../model/user_model.php';
+    $userObj = new User();
+    $accessibleFunctions = $userObj->getAccessibleFunctionsWithModule($current_user_id);
+
+    $hasDeletePermission = false;
+
+    foreach ($accessibleFunctions as $func) {
+        if (
+            strtolower($func['function_url']) === 'role_controller.php' &&
+            (int)$func['function_id'] === 11 // assuming 11 is "Delete Role"
+        ) {
+            $hasDeletePermission = true;
+            break;
+        }
+    }
+
+    if (!$hasDeletePermission) {
+        echo "<script>alert('Access Denied!'); window.location.href = '../view/dashboard.php';</script>";
+        exit;
+    }
+
+    // Proceed to delete role
+    include_once '../model/permission_model.php';
+    $roleObj = new Permission(); // Ensure the object is defined
+
+    try {
+        $roleObj->deleteRole($role_id); // Make sure this method exists and handles dependent data
+        $msg = base64_encode("Successfully Deleted!");
+        echo "<script>window.location = '../view/view-roles.php?msg={$msg}';</script>";
+    } catch (Exception $e) {
+        $error = base64_encode("Error deleting role: " . $e->getMessage());
+        echo "<script>window.location = '../view/view-roles.php?msg={$error}';</script>";
+    }
+
+    break;
+
 
     case "update_role":
 

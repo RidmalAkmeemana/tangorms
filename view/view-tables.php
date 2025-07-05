@@ -7,22 +7,21 @@ include_once '../model/table_model.php';
 
 checkFunctionPermission($_SERVER['PHP_SELF']);
 
-//get user information from session
 $userrow = $_SESSION["user"];
 
 $moduleObj = new Module();
-$userObj = new User();
+$tableObj = new Table();
 
 $moduleResult = $moduleObj->getAllModules();
-$userResult = $userObj->getAllUsers();
-
+$tableResult = $tableObj->getAllTables();
 
 ?>
 
-<html>
+<!DOCTYPE html>
+<html lang="en">
 
 <head>
-    <?php include_once "../includes/bootstrap_css_includes.php" ?>
+    <?php include_once "../includes/bootstrap_css_includes.php"; ?>
     <link rel="stylesheet" type="text/css" href="../css/dataTables.bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
@@ -97,18 +96,6 @@ $userResult = $userObj->getAllUsers();
             background-color: #ffe6cc;
         }
 
-        .success {
-            background-color: #d4edda !important;
-            color: #155724 !important;
-            font-weight: 600;
-        }
-
-        .danger {
-            background-color: #f8d7da !important;
-            color: #721c24 !important;
-            font-weight: 600;
-        }
-
         .btn {
             font-weight: 500;
             padding: 5px 10px;
@@ -134,6 +121,16 @@ $userResult = $userObj->getAllUsers();
             color: white;
         }
 
+        .btn-danger {
+            background-color: #dc3545;
+            border-color: #dc3545;
+            color: white;
+        }
+
+        .btn:hover {
+            opacity: 0.85;
+        }
+
         .badge {
             display: inline-block;
             padding: 0.35em 0.65em;
@@ -149,52 +146,45 @@ $userResult = $userObj->getAllUsers();
 
         .bg-success {
             background-color: #198754;
-            /* Bootstrap success green */
         }
 
         .bg-danger {
             background-color: #dc3545;
         }
 
-        .btn-danger {
-            background-color: #dc3545;
-            border-color: #dc3545;
-            color: white;
+        .bg-warning {
+            background-color: #ffc107;
+            color: #212529;
         }
 
-        .btn:hover {
-            opacity: 0.85;
+        .bg-primary {
+            background-color: #0d6efd;
         }
 
-        .user-img {
-            border: 2px solid #FF6600;
-            object-fit: cover;
+        .bg-secondary {
+            background-color: #6c757d;
+        }
+
+        .bg-dark {
+            background-color: #343a40;
         }
     </style>
 </head>
 
 <body>
     <div class="container">
-        <?php $pageName = "USER MANAGEMENT" ?>
+        <?php $pageName = "TABLE MANAGEMENT"; ?>
         <?php include_once "../includes/header_row_includes.php"; ?>
-        <?php require 'user-management-sidebar.php'; ?>
+        <?php require 'table-management-sidebar.php'; ?>
 
         <div class="col-md-9">
-            <?php
-
-            if (isset($_GET["msg"])) {
-
-                $msg = base64_decode($_GET["msg"]);
-
-            ?>
+            <?php if (isset($_GET["msg"])): ?>
                 <div class="row">
                     <div class="alert alert-success">
-                        <?php echo $msg; ?>
+                        <?= base64_decode($_GET["msg"]) ?>
                     </div>
                 </div>
-            <?php
-            }
-            ?>
+            <?php endif; ?>
 
             <div class="row">
                 <div class="col-12">
@@ -202,58 +192,57 @@ $userResult = $userObj->getAllUsers();
                         <table class="table table-bordered table-hover align-middle text-center table-striped" id="usertable">
                             <thead>
                                 <tr>
-                                    <th class="text-start" scope="col">Image</th>
-                                    <th class="text-start" scope="col">Name</th>
-                                    <th class="text-start" scope="col">Email</th>
-                                    <th class="text-center" scope="col">Status</th>
-                                    <th class="text-center" scope="col">Is Enable</th>
-                                    <th class="text-center" scope="col">Actions</th>
+                                    <th class="text-start">Table Name</th>
+                                    <th class="text-start">Capacity</th>
+                                    <th class="text-center">Status</th>
+                                    <th class="text-center">Room Name</th>
+                                    <th class="text-center">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php while ($userRow = $userResult->fetch_assoc()): ?>
+                                <?php while ($tableRow = $tableResult->fetch_assoc()): ?>
                                     <?php
-                                    $img_path = "../images/user_images/";
-                                    $user_id = base64_encode($userRow["user_id"]);
-                                    $img_file = empty($userRow["user_image"]) ? "user.png" : $userRow["user_image"];
-                                    $img_path .= $img_file;
+                                    $status = $tableRow["table_status"];
+                                    $table_id = base64_encode($tableRow["table_id"]);
 
-                                    $status = $userRow["user_status"] == 1 ? "Active" : "Deactive";
-                                    $status_class = $userRow["user_status"] == 1 ? "badge bg-success" : "badge bg-danger";
+                                    switch ($status) {
+                                        case "Vacant":
+                                            $status_class = "badge bg-success";
+                                            break;
+                                        case "Out of Service":
+                                            $status_class = "badge bg-secondary";
+                                            break;
+                                        case "Reserved":
+                                            $status_class = "badge bg-warning";
+                                            break;
+                                        case "Seated":
+                                            $status_class = "badge bg-primary";
+                                            break;
+                                        case "Dirty":
+                                            $status_class = "badge bg-danger";
+                                            break;
+                                        default:
+                                            $status_class = "badge bg-dark";
+                                            break;
+                                    }
                                     ?>
                                     <tr>
+                                        <td class="text-start"><?= htmlspecialchars($tableRow["table_name"]) ?></td>
+                                        <td class="text-start"><?= htmlspecialchars($tableRow["seat_count"]) ?></td>
                                         <td>
-                                            <img src="<?= $img_path ?>" class="rounded-circle user-img" width="50" height="50" alt="User">
+                                            <span class="<?= $status_class ?> px-3 py-1"><?= htmlspecialchars($status) ?></span>
                                         </td>
-                                        <td class="text-start pe-3"><?= htmlspecialchars($userRow["user_fname"] . " " . $userRow["user_lname"]) ?></td>
-                                        <td class="text-start pe-3"><?= htmlspecialchars($userRow["user_email"]) ?></td>
-                                        <td>
-                                            <span class="<?= $status_class ?> px-3 py-1"><?= $status ?></span>
-                                        </td>
-                                        <td>
-                                            <a href="../controller/user_controller.php?status=<?= $userRow["user_status"] == 1 ? 'deactivate' : 'activate' ?>&user_id=<?= $user_id ?>"
-                                                class="btn btn-sm <?= $userRow["user_status"] == 1 ? 'btn-danger' : 'btn-success' ?>">
-                                                <i class="fa <?= $userRow["user_status"] == 1 ? 'fa-times' : 'fa-check-circle' ?>"></i>
-                                                <?= $userRow["user_status"] == 1 ? 'Deactivate' : 'Activate' ?>
-                                            </a>
-                                        </td>
+                                        <td class="text-start"><?= htmlspecialchars($tableRow["room_name"]) ?></td>
                                         <td>
                                             <div class="d-flex flex-wrap gap-2 justify-content-center">
-                                                <a href="view-user.php?user_id=<?= $user_id ?>" class="btn btn-sm btn-info">
-                                                    <i class="fa fa-eye" aria-hidden="true"></i>
-                                                </a>
-                                                <a href="edit-user.php?user_id=<?= $user_id ?>" class="btn btn-sm btn-warning">
-                                                    <i class="fa fa-pencil" aria-hidden="true"></i>
-                                                </a>
-                                                <a href="../controller/user_controller.php?status=delete&user_id=<?= $user_id ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure to delete this user?');">
-                                                    <i class="fa fa-trash" aria-hidden="true"></i>
+                                                <a href="edit-table.php?table_id=<?= $table_id ?>" class="btn btn-sm btn-warning">
+                                                    <i class="fa fa-pencil"></i>
                                                 </a>
                                             </div>
                                         </td>
                                     </tr>
                                 <?php endwhile; ?>
                             </tbody>
-
                         </table>
                     </div>
                 </div>
@@ -266,9 +255,8 @@ $userResult = $userObj->getAllUsers();
 <script src="../js/datatable/jquery.dataTables.min.js"></script>
 <script src="../js/datatable/dataTables.bootstrap.min.js"></script>
 <script>
-    $(document).ready(function() {
-
-        $("#usertable").DataTable();
+    $(document).ready(function () {
+        $('#usertable').DataTable();
     });
 </script>
 

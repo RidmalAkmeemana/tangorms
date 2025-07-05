@@ -3,7 +3,7 @@
 include_once '../commons/session.php';
 include_once '../commons/helpers/permission_helper.php';
 include_once '../model/module_model.php';
-include_once '../model/user_model.php';
+include_once '../model/menu_model.php';
 
 checkFunctionPermission($_SERVER['PHP_SELF']);
 
@@ -11,10 +11,11 @@ checkFunctionPermission($_SERVER['PHP_SELF']);
 $userrow = $_SESSION["user"];
 
 $moduleObj = new Module();
-$userObj = new User();
+$menuObj = new Menu();
 
 $moduleResult = $moduleObj->getAllModules();
-$userResult = $userObj->getAllUsers();
+$menuResult = $menuObj->getAllCategory();
+
 
 ?>
 
@@ -174,9 +175,9 @@ $userResult = $userObj->getAllUsers();
 
 <body>
     <div class="container">
-        <?php $pageName = "USER MANAGEMENT" ?>
+        <?php $pageName = "MENU MANAGEMENT" ?>
         <?php include_once "../includes/header_row_includes.php"; ?>
-        <?php require 'user-management-sidebar.php'; ?>
+        <?php require 'menu-management-sidebar.php'; ?>
 
         <div class="col-md-9">
             <?php
@@ -201,50 +202,40 @@ $userResult = $userObj->getAllUsers();
                         <table class="table table-bordered table-hover align-middle text-center table-striped" id="usertable">
                             <thead>
                                 <tr>
-                                    <th class="text-start" scope="col">Image</th>
-                                    <th class="text-start" scope="col">Name</th>
-                                    <th class="text-start" scope="col">Email</th>
+                                    <th class="text-start" scope="col">Category Name</th>
                                     <th class="text-center" scope="col">Status</th>
                                     <th class="text-center" scope="col">Is Enable</th>
                                     <th class="text-center" scope="col">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php while ($userRow = $userResult->fetch_assoc()): ?>
+                                <?php while ($categoryRow = $menuResult->fetch_assoc()): ?>
                                     <?php
-                                    $img_path = "../images/user_images/";
-                                    $user_id = base64_encode($userRow["user_id"]);
-                                    $img_file = empty($userRow["user_image"]) ? "user.png" : $userRow["user_image"];
-                                    $img_path .= $img_file;
-
-                                    $status = $userRow["user_status"] == 1 ? "Active" : "Deactive";
-                                    $status_class = $userRow["user_status"] == 1 ? "badge bg-success" : "badge bg-danger";
+                                    $category_id = base64_encode($categoryRow["category_id"]);
+                                    $status = $categoryRow["category_status"] == 1 ? "Active" : "Deactive";
+                                    $status_class = $categoryRow["category_status"] == 1 ? "badge bg-success" : "badge bg-danger";
                                     ?>
                                     <tr>
-                                        <td>
-                                            <img src="<?= $img_path ?>" class="rounded-circle user-img" width="50" height="50" alt="User">
-                                        </td>
-                                        <td class="text-start pe-3"><?= htmlspecialchars($userRow["user_fname"] . " " . $userRow["user_lname"]) ?></td>
-                                        <td class="text-start pe-3"><?= htmlspecialchars($userRow["user_email"]) ?></td>
+                                        <td class="text-start pe-3"><?= htmlspecialchars($categoryRow["category_name"]) ?></td>
                                         <td>
                                             <span class="<?= $status_class ?> px-3 py-1"><?= $status ?></span>
                                         </td>
                                         <td>
-                                            <a href="../controller/user_controller.php?status=<?= $userRow["user_status"] == 1 ? 'deactivate' : 'activate' ?>&user_id=<?= $user_id ?>"
-                                                class="btn btn-sm <?= $userRow["user_status"] == 1 ? 'btn-danger' : 'btn-success' ?>">
-                                                <i class="fa <?= $userRow["user_status"] == 1 ? 'fa-times' : 'fa-check-circle' ?>"></i>
-                                                <?= $userRow["user_status"] == 1 ? 'Deactivate' : 'Activate' ?>
+                                            <a href="../controller/menu_controller.php?status=<?= $categoryRow["category_status"] == 1 ? 'deactivate' : 'activate' ?>&category_id=<?= $category_id ?>"
+                                                class="btn btn-sm <?= $categoryRow["category_status"] == 1 ? 'btn-danger' : 'btn-success' ?>">
+                                                <i class="fa <?= $categoryRow["category_status"] == 1 ? 'fa-times' : 'fa-check-circle' ?>"></i>
+                                                <?= $categoryRow["category_status"] == 1 ? 'Deactivate' : 'Activate' ?>
                                             </a>
                                         </td>
                                         <td>
                                             <div class="d-flex flex-wrap gap-2 justify-content-center">
-                                                <a href="view-user.php?user_id=<?= $user_id ?>" class="btn btn-sm btn-info">
+                                                <a href="view-category.php?category_id=<?= $category_id ?>" class="btn btn-sm btn-info">
                                                     <i class="fa fa-eye" aria-hidden="true"></i>
                                                 </a>
-                                                <a href="edit-user.php?user_id=<?= $user_id ?>" class="btn btn-sm btn-warning">
+                                                <a href="edit-category.php?category_id=<?= $category_id ?>" class="btn btn-sm btn-warning">
                                                     <i class="fa fa-pencil" aria-hidden="true"></i>
                                                 </a>
-                                                <a href="../controller/user_controller.php?status=delete&user_id=<?= $user_id ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure to delete this user?');">
+                                                <a href="../controller/menu_controller.php?status=delete&category_id=<?= $category_id ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure to delete this role?');">
                                                     <i class="fa fa-trash" aria-hidden="true"></i>
                                                 </a>
                                             </div>

@@ -160,4 +160,32 @@ class Permission
 
         return $row ? $row['module_id'] : null;
     }
+
+    public function deleteRole($role_id)
+{
+    $con = $GLOBALS["con"];
+
+    // Optional: Delete related records first if there are foreign keys
+    $con->query("DELETE FROM role_function WHERE role_id = '$role_id'");
+    $con->query("DELETE FROM role_module WHERE role_id = '$role_id'");
+
+    $stmt = $con->prepare("DELETE FROM role WHERE role_id = ?");
+    $stmt->bind_param("i", $role_id);
+    $stmt->execute();
+    $stmt->close();
+}
+
+public function deleteRoom($room_id)
+{
+    $con = $GLOBALS["con"];
+
+    // Optional: Delete related records first if there are foreign keys
+    $con->query("DELETE FROM room_function WHERE room_id = '$room_id'");
+    $con->query("DELETE FROM room_module WHERE room_id = '$room_id'");
+
+    $stmt = $con->prepare("DELETE FROM room WHERE room_id = ?");
+    $stmt->bind_param("i", $room_id);
+    $stmt->execute();
+    $stmt->close();
+}
 }

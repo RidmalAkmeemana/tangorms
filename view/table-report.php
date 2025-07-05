@@ -10,11 +10,11 @@ include "../commons/fpdf186/fpdf.php";
 // Create FPDF instance
 $fpdf = new FPDF("P", "mm", "A4");
 
-// Include user model
-include_once '../model/user_model.php';
+// Include table model
+include_once '../model/table_model.php';
 
-$userObj = new User();
-$userResult = $userObj->getAllUsers();
+$tableObj = new Table();
+$tableResult = $tableObj->getAllTables();
 
 $date = date("Y-m-d");
 
@@ -24,29 +24,28 @@ $fpdf->SetFont("Arial", "", 18);
 $fpdf->Image("../images/logo1.png", 10, 20, 20, 20);
 
 // Page Title
-$fpdf->Cell(0, 30, "USER REPORT", 0, 1, "C");
+$fpdf->Cell(0, 30, "TABLE REPORT", 0, 1, "C");
 
 $fpdf->SetFont("Arial", "", 11);
 $fpdf->Cell(0, 10, "The System Users as of $date are listed below:", 0, 1, "L");
 
 // Set column headers (total width = 190 mm)
 $fpdf->SetFont("Arial", "B", 11);
-$fpdf->Cell(50, 10, "Name", 1, 0, "C");
-$fpdf->Cell(70, 10, "Email", 1, 0, "C");
-$fpdf->Cell(40, 10, "Contact No", 1, 0, "C");
+$fpdf->Cell(50, 10, "Table Name", 1, 0, "C");
+$fpdf->Cell(70, 10, "Room Name", 1, 0, "C");
+$fpdf->Cell(40, 10, "Capacity", 1, 0, "C");
 $fpdf->Cell(30, 10, "Status", 1, 1, "C");
 
 // Table Data
 $fpdf->SetFont("Arial", "", 11);
 
-while ($userRow = $userResult->fetch_assoc()) {
-    $status = ($userRow["user_status"] == '1') ? "Active" : "Deactive";
+while ($tableRow = $tableResult->fetch_assoc()) {
+    $status = $tableRow["table_status"];
+    $tableName = $tableRow['table_name'];
 
-    $fullName = $userRow['user_fname'] . " " . $userRow['user_lname'];
-
-    $fpdf->Cell(50, 10, $fullName, 1, 0, "C");
-    $fpdf->Cell(70, 10, $userRow['user_email'], 1, 0, "C");
-    $fpdf->Cell(40, 10, $userRow['user_contact'], 1, 0, "C");
+    $fpdf->Cell(50, 10, $tableName, 1, 0, "C");
+    $fpdf->Cell(70, 10, $tableRow['room_name'], 1, 0, "C");
+    $fpdf->Cell(40, 10, $tableRow['seat_count'], 1, 0, "C");
     $fpdf->Cell(30, 10, $status, 1, 1, "C");
 }
 

@@ -232,7 +232,7 @@ $roleResult = $roleObj->getAllRoles();
                                                 <a href="edit-role.php?role_id=<?= $role_id ?>" class="btn btn-sm btn-warning">
                                                     <i class="fa fa-pencil" aria-hidden="true"></i>
                                                 </a>
-                                                <a href="../controller/role_controller.php?status=delete&role_id=<?= $role_id ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure to delete this user?');">
+                                                <a href="../controller/role_controller.php?status=delete&role_id=<?= $role_id ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure to delete this role?');">
                                                     <i class="fa fa-trash" aria-hidden="true"></i>
                                                 </a>
                                             </div>

@@ -35,9 +35,10 @@ $accessibleUrls = array_column($accessibleFunctions, 'function_url');
             </a>
         <?php } ?>
 
-         <!-- Home link is always visible -->
-        <a href="user-report.php" class="list-group-item" target="_blank">
-            <span class="glyphicon glyphicon-book"></span> &nbsp; Generate User Report
-        </a>
+        <?php if (in_array('user-report.php', $accessibleUrls)) { ?>
+            <a href="user-report.php" class="list-group-item">
+                <span class="glyphicon glyphicon-book"></span> &nbsp; Generate User Report
+            </a>
+        <?php } ?>
     </ul>
 </div>

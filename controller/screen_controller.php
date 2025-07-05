@@ -28,7 +28,7 @@ switch ($status) {
             $toInsert = array_diff($selectedFunctions, $currentFunctions);
             $toDelete = array_diff($currentFunctions, $selectedFunctions);
 
-            $mainFunctionIds = [1, 8, 14];
+            $mainFunctionIds = [1, 8, 14, 27];
 
             foreach ($toInsert as $function_id) {
                 $permissionObj->addRoleFunction($role_id, $function_id);

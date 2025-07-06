@@ -1,8 +1,8 @@
 <?php
-include_once '../model/table_model.php';
+include_once '../model/pos_model.php';
 
-$tableObj = new Table();
-$tableResult = $tableObj->getAllTables(); // Replace with your actual table fetch method
+$posObj = new POS();
+$tableResult = $posObj->getTables(); // Replace with your actual table fetch method
 
 $tables = [];
 while ($row = $tableResult->fetch_assoc()) {

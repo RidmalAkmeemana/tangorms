@@ -4,7 +4,6 @@ include_once '../commons/helpers/permission_helper.php';
 include_once '../model/pos_model.php';
 include_once '../model/customer_model.php';
 include_once '../model/menu_model.php';
-include_once '../model/table_model.php';
 
 
 checkFunctionPermission($_SERVER['PHP_SELF']);
@@ -15,6 +14,7 @@ $user_id = $userrow["user_id"];
 // Get user invoice no
 $posObj = new POS();
 $posResult = $posObj->getInvoiceNo();
+$tableResult = $posObj->getTables();
 
 // Get user customers for dropdown
 $customerObj = new Customer();
@@ -22,9 +22,6 @@ $customerResult = $customerObj->getAllCustomers();
 
 $menuObj = new Menu();
 $categoryResult = $menuObj->getAllCategory();
-
-$tableObj = new Table();
-$tableResult = $tableObj->getAllTables();
 
 ?>
 <!DOCTYPE html>
@@ -156,7 +153,7 @@ $tableResult = $tableObj->getAllTables();
             <form class="col-md-9" action="../controller/pos_controller.php?status=submit_order" method="post">
                 <?php if (isset($_GET['msg'])): ?>
                     <div class="row">
-                        <div class="col-md-8 col-md-offset-2 alert alert-danger text-center">
+                        <div class="col-md-8 col-md-offset-2 alert alert-success text-center">
                             <?= base64_decode($_GET['msg']); ?>
                         </div>
                     </div>
@@ -258,6 +255,7 @@ $tableResult = $tableObj->getAllTables();
                             <option value="Cash">Cash</option>
                             <option value="Card">Card</option>
                             <option value="Bank Transfer">Bank Transfer</option>
+                            <option value="N/A">N/A</option>
                         </select>
                     </div>
                 </div>
@@ -285,7 +283,7 @@ $tableResult = $tableObj->getAllTables();
                             <option value="">-- Select Order Type --</option>
                             <option value="Dine-In">Dine-In</option>
                             <option value="Take-Away">Take-Away</option>
-                            <option value="Dilivery">Dilivery</option>
+                            <option value="Delivery">Delivery</option>
                         </select>
                     </div>
                 </div>
@@ -497,12 +495,12 @@ $tableResult = $tableObj->getAllTables();
 
                     const newRow = `
                         <tr data-index="${cartIndex}">
-                            <td class="text-start">${itemCode}</td>
+                            <td class="text-start">${itemCode}<input type="hidden" name="item_code[]" value="${itemCode}"></td>
                             <td><img src="${imagePath}" class="rounded-circle" width="50" height="50" alt="Item"></td>
-                            <td class="text-start">${itemData.item_name}</td>
-                            <td>${parseFloat(itemData.item_price).toFixed(2)}</td>
-                            <td>${qty}</td>
-                            <td>${totalPrice}</td>
+                            <td class="text-start">${itemData.item_name}<input type="hidden" name="item_name[]" value="${itemData.item_name}"></td>
+                            <td>${parseFloat(itemData.item_price).toFixed(2)}<input type="hidden" name="item_price[]" value="${itemData.item_price}"></td>
+                            <td>${qty}<input type="hidden" name="item_qty[]" value="${qty}"></td>
+                            <td>${totalPrice}<input type="hidden" name="total_price[]" value="${totalPrice}"></td>
                             <td>
                                 <button class="btn btn-sm btn-danger remove-cart-item">
                                     <i class="fa fa-trash"></i>

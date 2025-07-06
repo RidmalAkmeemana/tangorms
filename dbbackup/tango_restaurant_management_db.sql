@@ -2,10 +2,10 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: localhost
--- Generation Time: Jul 05, 2025 at 05:28 AM
--- Server version: 10.4.28-MariaDB
--- PHP Version: 8.1.17
+-- Host: 127.0.0.1
+-- Generation Time: Jul 06, 2025 at 10:02 PM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.0.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -38,11 +38,41 @@ CREATE TABLE `categories` (
 --
 
 INSERT INTO `categories` (`category_id`, `category_name`, `category_status`) VALUES
-(1, 'Breackfast', 1),
+(1, 'Breakfast', 1),
 (2, 'Lunch', 1),
 (3, 'Dinner', 1),
 (5, 'Test2', -1),
-(6, 'Test', 1);
+(6, 'Test', -1),
+(7, 'test', -1),
+(8, 'effsfs', -1),
+(9, 'sdfsf', -1),
+(10, 'fefsef', -1),
+(11, 'sefsfe', -1),
+(12, 'yt8', -1),
+(13, 'urtutyu', -1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `customer`
+--
+
+CREATE TABLE `customer` (
+  `customer_id` int(11) NOT NULL,
+  `customer_nic` varchar(12) NOT NULL,
+  `customer_name` varchar(100) NOT NULL,
+  `customer_mobile` varchar(10) NOT NULL,
+  `customer_address` varchar(200) DEFAULT NULL,
+  `customer_status` int(1) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `customer`
+--
+
+INSERT INTO `customer` (`customer_id`, `customer_nic`, `customer_name`, `customer_mobile`, `customer_address`, `customer_status`) VALUES
+(2, '199826600203', 'Ridmal Akmeemana', '0773697070', NULL, 1),
+(5, '199826600204', 'Tharindu Deshan Nawagamuwa', '0773698081', 'No: 30, Kalaiya Rd, IDH', 1);
 
 -- --------------------------------------------------------
 
@@ -100,7 +130,19 @@ INSERT INTO `function` (`function_id`, `function_name`, `function_url`, `module_
 (91, 'View Item', 'view-item.php', 3, 1),
 (92, 'Edit Item', 'edit-item.php', 3, 1),
 (93, 'Item Delete', 'menu_controller.php', 3, 1),
-(94, 'Item Report', 'item-report.php', 3, 1);
+(94, 'Item Report', 'item-report.php', 3, 1),
+(95, 'Inventory & Stock Management', 'inventory.php', 7, 1),
+(96, 'View All Inventories', 'view-inventories.php', 7, 1),
+(97, 'Inventory Report', 'inventory-report.php', 7, 1),
+(98, 'Edit Inventory', 'edit-inventory.php', 7, 1),
+(99, 'Sales & POS Management', 'pos.php', 4, 1),
+(100, 'Add Customer', 'add-customer.php', 4, 1),
+(101, 'View All Customers', 'view-customers.php', 4, 1),
+(103, 'Customer Delete', 'customer_controller.php', 4, 1),
+(104, 'Customer Report', 'customer-report.php', 4, 1),
+(105, 'View Customer', 'view-customer.php', 4, 1),
+(106, 'Edit Customer', 'edit-customer.php', 4, 1),
+(107, 'New Sale', 'pos-sale.php', 4, 1);
 
 -- --------------------------------------------------------
 
@@ -110,22 +152,27 @@ INSERT INTO `function` (`function_id`, `function_name`, `function_url`, `module_
 
 CREATE TABLE `item` (
   `item_id` int(11) NOT NULL,
+  `item_code` varchar(11) NOT NULL,
   `item_name` varchar(255) NOT NULL,
   `item_description` text DEFAULT NULL,
   `item_price` decimal(10,2) NOT NULL,
   `item_category` int(100) DEFAULT NULL,
   `item_image` varchar(255) DEFAULT NULL,
   `item_qty` int(1) DEFAULT 1,
-  `item_status` int(11) NOT NULL
+  `item_status` int(11) NOT NULL,
+  `last_update` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `item`
 --
 
-INSERT INTO `item` (`item_id`, `item_name`, `item_description`, `item_price`, `item_category`, `item_image`, `item_qty`, `item_status`) VALUES
-(1, 'Bread', 'Bread', 200.00, 1, 'Bread.jpg', 10, 1),
-(5, 'Rice', 'Rice', 500.00, 2, '1751566305_', 22, 1);
+INSERT INTO `item` (`item_id`, `item_code`, `item_name`, `item_description`, `item_price`, `item_category`, `item_image`, `item_qty`, `item_status`, `last_update`) VALUES
+(9, 'BUN-B01', 'Breakfast Bun ', 'Breakfast Bun', 150.00, 1, '1751781248_1751690007_images.jpeg', 4, 1, '2025-07-06 19:59:27'),
+(10, 'BUN-L01', 'Lunch Bun', 'Lunch Bun', 250.00, 2, '1751705272_1751690007_images.jpeg', 6, 1, '2025-07-06 19:59:27'),
+(11, 'BUN-D01', 'Dinner Bun', 'Dinner Bun', 100.00, 3, '1751705220_1751690007_images.jpeg', 10, -1, '2025-07-05 09:12:07'),
+(13, 'BRD005', 'Bun', 'Bun', 100.00, 3, '1751708170_1751690007_images.jpeg', 11, -1, '2025-07-05 09:36:50'),
+(14, 'BUN-L013', 'Bread', '22', 22.00, 1, '1751708164_1751690007_images.jpeg', 22, -1, '2025-07-05 09:36:47');
 
 -- --------------------------------------------------------
 
@@ -190,70 +237,87 @@ INSERT INTO `module` (`module_id`, `module_name`, `module_icon`, `module_url`, `
 -- --------------------------------------------------------
 
 --
--- Table structure for table `order`
+-- Table structure for table `orders`
 --
 
-CREATE TABLE `order` (
-  `order_id` int(11) NOT NULL,
+CREATE TABLE `orders` (
+  `Id` int(11) NOT NULL,
+  `receipt_no` varchar(30) NOT NULL,
+  `customer_id` int(11) DEFAULT NULL,
+  `payment_status` enum('Fully Paid','Partially Paid','Unpaid') NOT NULL,
+  `sub_total_amount` float(10,2) NOT NULL,
+  `discount` float(10,2) NOT NULL,
+  `total_amount` float(10,2) NOT NULL,
+  `paid_amount` float(10,2) NOT NULL,
+  `balance` float(10,2) NOT NULL,
+  `due_amount` float(10,2) NOT NULL,
+  `payment_method` enum('Cash','Card','Bank Transfer','N/A') NOT NULL,
+  `order_type` enum('Dine-In','Take-Away','Delivery') NOT NULL,
+  `order_status` enum('Pending','Preparing','Served','Delivering','Completed','Rejected','Canceled') NOT NULL,
+  `reason` varchar(150) DEFAULT NULL,
   `table_id` int(11) DEFAULT NULL,
-  `order_date` date NOT NULL,
-  `order_time` time NOT NULL,
-  `order_status` int(11) NOT NULL,
-  `order_complete_time` time DEFAULT NULL,
-  `waiter_id` int(11) DEFAULT NULL,
-  `bill_number` varchar(20) DEFAULT NULL,
-  `subtotal` decimal(10,2) DEFAULT NULL,
-  `tax` decimal(10,2) DEFAULT NULL,
-  `discount` decimal(10,2) DEFAULT NULL,
-  `payment_method` varchar(50) DEFAULT NULL,
-  `bill_status` varchar(20) DEFAULT NULL,
-  `timestamp` timestamp NOT NULL DEFAULT current_timestamp()
+  `invoice_date` timestamp NOT NULL DEFAULT current_timestamp(),
+  `payment_date` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `orders`
+--
+
+INSERT INTO `orders` (`Id`, `receipt_no`, `customer_id`, `payment_status`, `sub_total_amount`, `discount`, `total_amount`, `paid_amount`, `balance`, `due_amount`, `payment_method`, `order_type`, `order_status`, `reason`, `table_id`, `invoice_date`, `payment_date`) VALUES
+(58, 'TANGOREC00001', 2, 'Fully Paid', 800.00, 0.00, 800.00, 800.00, 0.00, 0.00, 'Cash', 'Dine-In', 'Pending', NULL, 7, '2025-07-06 19:58:48', '2025-07-06 16:28:48'),
+(59, 'TANGOREC00002', 5, 'Unpaid', 1100.00, 0.00, 1100.00, 0.00, 0.00, 1100.00, 'N/A', 'Dine-In', 'Pending', NULL, 8, '2025-07-06 19:59:27', NULL);
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `order_items`
+-- Table structure for table `order_item`
 --
 
-CREATE TABLE `order_items` (
-  `order_item_id` int(11) NOT NULL,
-  `order_id` int(11) DEFAULT NULL,
-  `menu_item_id` int(11) DEFAULT NULL,
-  `quantity` int(11) DEFAULT NULL,
-  `item_price` decimal(10,2) DEFAULT NULL,
-  `item_total` decimal(10,2) DEFAULT NULL
+CREATE TABLE `order_item` (
+  `Id` int(11) NOT NULL,
+  `receipt_no` varchar(30) NOT NULL,
+  `item_code` varchar(150) NOT NULL,
+  `item_name` varchar(250) NOT NULL,
+  `item_price` float(10,2) NOT NULL,
+  `item_qty` int(11) NOT NULL,
+  `total_price` float(10,2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `order_item`
+--
+
+INSERT INTO `order_item` (`Id`, `receipt_no`, `item_code`, `item_name`, `item_price`, `item_qty`, `total_price`) VALUES
+(90, 'TANGOREC00001', 'BUN-B01', 'Breakfast Bun ', 150.00, 2, 300.00),
+(91, 'TANGOREC00001', 'BUN-L01', 'Lunch Bun', 250.00, 2, 500.00),
+(92, 'TANGOREC00002', 'BUN-B01', 'Breakfast Bun ', 150.00, 4, 600.00),
+(93, 'TANGOREC00002', 'BUN-L01', 'Lunch Bun', 250.00, 2, 500.00);
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `restaurant_table`
+-- Table structure for table `payments`
 --
 
-CREATE TABLE `restaurant_table` (
-  `table_id` int(11) NOT NULL,
-  `table_name` varchar(50) NOT NULL,
-  `capacity` int(11) NOT NULL,
-  `status_id` int(11) NOT NULL DEFAULT 1,
-  `room_id` int(10) NOT NULL
+CREATE TABLE `payments` (
+  `Id` int(11) NOT NULL,
+  `receipt_no` varchar(30) NOT NULL,
+  `payment_id` int(11) NOT NULL,
+  `total_amount` float(10,2) NOT NULL,
+  `paid_amount` float(10,2) NOT NULL,
+  `balance` float(10,2) NOT NULL,
+  `due_amount` float(10,2) NOT NULL,
+  `payment_method` enum('Cash','Card','Bank Transfer','N/A') NOT NULL,
+  `payment_date` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `restaurant_table`
+-- Dumping data for table `payments`
 --
 
-INSERT INTO `restaurant_table` (`table_id`, `table_name`, `capacity`, `status_id`, `room_id`) VALUES
-(6, 'T10', 10, 0, 4),
-(7, 'T1', 2, 0, 6),
-(8, 'T7', 10, 0, 2),
-(9, 'T4', 2, 1, 5),
-(10, 'T45', 15, 4, 6),
-(11, 'T56', 4, 3, 2),
-(12, 'T99', 6, 1, 4),
-(13, 'T5', 2, 0, 1),
-(14, 'T64', 4, 1, 3),
-(15, 'T14', 10, 1, 4);
+INSERT INTO `payments` (`Id`, `receipt_no`, `payment_id`, `total_amount`, `paid_amount`, `balance`, `due_amount`, `payment_method`, `payment_date`) VALUES
+(52, 'TANGOREC00001', 1, 800.00, 800.00, 0.00, 0.00, 'Cash', '2025-07-06 19:58:49');
 
 -- --------------------------------------------------------
 
@@ -278,7 +342,8 @@ INSERT INTO `role` (`role_id`, `role_name`, `role_status`) VALUES
 (4, 'Data Entry Clerk', 1),
 (5, 'Delivery Rider', 1),
 (8, 'Test', -1),
-(9, 'Test', -1);
+(9, 'Test', -1),
+(13, 'Admin', 1);
 
 -- --------------------------------------------------------
 
@@ -334,6 +399,18 @@ INSERT INTO `role_function` (`role_id`, `function_id`) VALUES
 (1, 92),
 (1, 93),
 (1, 94),
+(1, 95),
+(1, 96),
+(1, 97),
+(1, 98),
+(1, 99),
+(1, 100),
+(1, 101),
+(1, 103),
+(1, 104),
+(1, 105),
+(1, 106),
+(1, 107),
 (2, 1),
 (2, 2),
 (2, 3),
@@ -345,7 +422,18 @@ INSERT INTO `role_function` (`role_id`, `function_id`) VALUES
 (2, 12),
 (2, 14),
 (2, 15),
-(2, 16);
+(2, 16),
+(3, 14),
+(3, 15),
+(3, 16),
+(3, 19),
+(3, 20),
+(3, 21),
+(3, 22),
+(3, 23),
+(3, 24),
+(3, 25),
+(3, 26);
 
 -- --------------------------------------------------------
 
@@ -365,11 +453,14 @@ CREATE TABLE `role_module` (
 INSERT INTO `role_module` (`role_id`, `module_id`) VALUES
 (1, 1),
 (1, 3),
+(1, 4),
 (1, 5),
+(1, 7),
 (1, 10),
 (2, 1),
 (2, 5),
-(2, 10);
+(2, 10),
+(3, 1);
 
 -- --------------------------------------------------------
 
@@ -395,7 +486,12 @@ INSERT INTO `room` (`room_id`, `room_name`, `room_layout`, `room_status`) VALUES
 (4, 'Main Dining Area', 'mda.png', 1),
 (5, 'Outdoor Dining Area', 'oda.png', 1),
 (6, 'Bar & Grill Area\r\n', 'bga.png', 1),
-(17, 'Balcony Area', '1751444636_images.jpeg', 1);
+(17, 'Balcony Area', '1751444636_images.jpeg', 1),
+(18, 'uyguyh', '1751706852_', -1),
+(19, 'uyguyh', '1751707383_', -1),
+(20, 'dsdsd', '1751707442_', -1),
+(21, 'dfdfdf', '1751707520_', -1),
+(22, 'thjg6', '', -1);
 
 -- --------------------------------------------------------
 
@@ -416,32 +512,35 @@ CREATE TABLE `table` (
 --
 
 INSERT INTO `table` (`table_id`, `table_name`, `seat_count`, `table_status`, `room_id`) VALUES
-(7, 'RM1T1', 4, 'Vacant', 1),
-(8, 'RM1T2', 4, 'Out of Service', 1),
-(9, 'RM1T3', 0, 'Vacant', 1),
-(10, 'RM1T4', 1, 'Dirty', 3),
-(11, 'RM1T5', 4, 'Reserved', 1),
-(12, 'RM1T6', 4, 'Seated', 1),
-(13, 'RM1T7', 2, 'Reserved', 3),
+(7, 'RM1T1', 4, 'Seated', 1),
+(8, 'RM1T2', 4, 'Seated', 1),
+(9, 'RM1T3', 4, 'Vacant', 1),
+(10, 'RM1T4', 1, 'Vacant', 3),
+(11, 'RM1T5', 4, 'Vacant', 1),
+(12, 'RM1T6', 4, 'Vacant', 1),
+(13, 'RM1T7', 2, 'Vacant', 3),
 (14, 'Testqq', 2, 'Vacant', 15),
 (15, 'BTBL1', 4, 'Vacant', 17),
-(16, 'BTBL2', 2, 'Reserved', 17);
+(16, 'BTBL2', 2, 'Vacant', 17),
+(17, '1 Chair Table', 1, 'Vacant', 2);
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `table_activity_log`
+-- Table structure for table `temp_invoice`
 --
 
-CREATE TABLE `table_activity_log` (
-  `log_id` int(11) NOT NULL,
-  `table_id` int(11) NOT NULL,
-  `action_type` varchar(50) NOT NULL,
-  `performed_by` int(11) NOT NULL,
-  `related_table_id` int(11) DEFAULT NULL,
-  `remarks` text DEFAULT NULL,
-  `timestamp` datetime DEFAULT current_timestamp()
+CREATE TABLE `temp_invoice` (
+  `id` int(1) NOT NULL,
+  `value` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `temp_invoice`
+--
+
+INSERT INTO `temp_invoice` (`id`, `value`) VALUES
+(1, 3);
 
 -- --------------------------------------------------------
 
@@ -468,14 +567,15 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`user_id`, `user_fname`, `user_lname`, `user_email`, `user_password`, `user_dob`, `user_nic`, `user_image`, `user_role`, `user_status`, `user_contact`) VALUES
-(49, 'Kamal', 'Perera', 'kamal@esoft.lk', '202cb962ac59075b964b07152d234b70', '2025-04-06', '605120458V', '1751265171_3d-cartoon-baby-genius-photo.jpg', 2, 1, '0773456060'),
+(49, 'Kamal', 'Perera', 'kamal@esoft.lk', '202cb962ac59075b964b07152d234b70', '2025-04-06', '605120458V', '', 3, 1, '0773456060'),
 (57, 'Ridmal', 'Akmeemana', 'rajeewaakmeemana@gmail.com', '202cb962ac59075b964b07152d234b70', '1998-09-22', '982660203V', '', 1, 1, '0773697070'),
-(61, 'Miranga', 'Senarathna', 'miranga@sits.lk', '866c7ee013c58f01fa153a8d32c9ed57', '2025-06-24', '881441756V', '1750873659_3d-cartoon-baby-genius-photo.jpg', 2, 1, '0773697070'),
+(61, 'Miranga', 'Senarathna', 'miranga@sits.lk', '202cb962ac59075b964b07152d234b70', '2025-06-24', '881441756V', '', 3, 1, '0773697070'),
 (62, 'Anusha', 'Perera', 'anusha@gmail.com', '202cb962ac59075b964b07152d234b70', '2025-06-26', '963133223V', '1750958069_images (1).jpeg', 1, -1, '0773698080'),
 (63, 'Janaka', 'Rathnayaka', 'janaka@gmail.com', '202cb962ac59075b964b07152d234b70', '2025-06-19', '963133223V', '', 2, -1, '0773697070'),
 (64, 'Miranga', 'Perera', 'miranga@sis.lk', '81dc9bdb52d04dc20036dbd8313ed055', '2025-06-26', '956182015V', '1751016923_images (1).jpeg', 2, -1, '0773697070'),
 (65, 'Test', 'Senarathna', 'test@gmail.com', '202cb962ac59075b964b07152d234b70', '2025-06-26', '963133223V', '1751091914_3d-cartoon-baby-genius-photo.jpg', 1, -1, '0773698080'),
-(66, 'Test', 'Perera', 'test@gmail.com', '202cb962ac59075b964b07152d234b70', '2025-06-30', '956182015V', '', 1, -1, '0773698080');
+(66, 'Test', 'Perera', 'test@gmail.com', '202cb962ac59075b964b07152d234b70', '2025-06-30', '956182015V', '', 1, -1, '0773698080'),
+(67, 'dwsd', 'aedawd', 'ridmal.akmeemana@colombo.rezgateway.com', '1d74b99d4aae9c5aab2f6003fee2d8d0', '2025-07-01', '605120458V', '', 2, -1, '0773456060');
 
 --
 -- Indexes for dumped tables
@@ -488,6 +588,13 @@ ALTER TABLE `categories`
   ADD PRIMARY KEY (`category_id`);
 
 --
+-- Indexes for table `customer`
+--
+ALTER TABLE `customer`
+  ADD PRIMARY KEY (`customer_id`),
+  ADD UNIQUE KEY `customer_nic` (`customer_nic`);
+
+--
 -- Indexes for table `function`
 --
 ALTER TABLE `function`
@@ -497,7 +604,8 @@ ALTER TABLE `function`
 -- Indexes for table `item`
 --
 ALTER TABLE `item`
-  ADD PRIMARY KEY (`item_id`);
+  ADD PRIMARY KEY (`item_id`),
+  ADD UNIQUE KEY `item_code` (`item_code`);
 
 --
 -- Indexes for table `login`
@@ -513,24 +621,29 @@ ALTER TABLE `module`
   ADD PRIMARY KEY (`module_id`);
 
 --
--- Indexes for table `order`
+-- Indexes for table `orders`
 --
-ALTER TABLE `order`
-  ADD PRIMARY KEY (`order_id`),
-  ADD UNIQUE KEY `bill_number` (`bill_number`),
-  ADD KEY `table_id` (`table_id`);
+ALTER TABLE `orders`
+  ADD PRIMARY KEY (`Id`),
+  ADD UNIQUE KEY `Invoice_Id` (`receipt_no`),
+  ADD UNIQUE KEY `Invoice_No` (`receipt_no`),
+  ADD UNIQUE KEY `Invoice_Id_2` (`receipt_no`),
+  ADD UNIQUE KEY `receipt_no` (`receipt_no`),
+  ADD KEY `Customer_Id` (`customer_id`);
 
 --
--- Indexes for table `order_items`
+-- Indexes for table `order_item`
 --
-ALTER TABLE `order_items`
-  ADD PRIMARY KEY (`order_item_id`);
+ALTER TABLE `order_item`
+  ADD PRIMARY KEY (`Id`);
 
 --
--- Indexes for table `restaurant_table`
+-- Indexes for table `payments`
 --
-ALTER TABLE `restaurant_table`
-  ADD PRIMARY KEY (`table_id`);
+ALTER TABLE `payments`
+  ADD PRIMARY KEY (`Id`),
+  ADD UNIQUE KEY `receipt_no` (`receipt_no`),
+  ADD KEY `Invoice_Id` (`receipt_no`);
 
 --
 -- Indexes for table `role`
@@ -564,10 +677,10 @@ ALTER TABLE `table`
   ADD PRIMARY KEY (`table_id`);
 
 --
--- Indexes for table `table_activity_log`
+-- Indexes for table `temp_invoice`
 --
-ALTER TABLE `table_activity_log`
-  ADD PRIMARY KEY (`log_id`);
+ALTER TABLE `temp_invoice`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `user`
@@ -583,19 +696,25 @@ ALTER TABLE `user`
 -- AUTO_INCREMENT for table `categories`
 --
 ALTER TABLE `categories`
-  MODIFY `category_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `category_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+
+--
+-- AUTO_INCREMENT for table `customer`
+--
+ALTER TABLE `customer`
+  MODIFY `customer_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `function`
 --
 ALTER TABLE `function`
-  MODIFY `function_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=95;
+  MODIFY `function_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=108;
 
 --
 -- AUTO_INCREMENT for table `item`
 --
 ALTER TABLE `item`
-  MODIFY `item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `login`
@@ -610,62 +729,56 @@ ALTER TABLE `module`
   MODIFY `module_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
--- AUTO_INCREMENT for table `order`
+-- AUTO_INCREMENT for table `orders`
 --
-ALTER TABLE `order`
-  MODIFY `order_id` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `orders`
+  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=60;
 
 --
--- AUTO_INCREMENT for table `order_items`
+-- AUTO_INCREMENT for table `order_item`
 --
-ALTER TABLE `order_items`
-  MODIFY `order_item_id` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `order_item`
+  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=94;
 
 --
--- AUTO_INCREMENT for table `restaurant_table`
+-- AUTO_INCREMENT for table `payments`
 --
-ALTER TABLE `restaurant_table`
-  MODIFY `table_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+ALTER TABLE `payments`
+  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
 
 --
 -- AUTO_INCREMENT for table `role`
 --
 ALTER TABLE `role`
-  MODIFY `role_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `role_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `room`
 --
 ALTER TABLE `room`
-  MODIFY `room_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `room_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT for table `table`
 --
 ALTER TABLE `table`
-  MODIFY `table_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `table_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
--- AUTO_INCREMENT for table `table_activity_log`
+-- AUTO_INCREMENT for table `temp_invoice`
 --
-ALTER TABLE `table_activity_log`
-  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `temp_invoice`
+  MODIFY `id` int(1) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=67;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=68;
 
 --
 -- Constraints for dumped tables
 --
-
---
--- Constraints for table `order`
---
-ALTER TABLE `order`
-  ADD CONSTRAINT `order_ibfk_2` FOREIGN KEY (`table_id`) REFERENCES `restaurant_table` (`table_id`) ON DELETE SET NULL;
 
 --
 -- Constraints for table `role_function`

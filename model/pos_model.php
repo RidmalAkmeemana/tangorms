@@ -29,4 +29,122 @@ class POS
         $result = $con->query($sql) or die($con->error);
         return $result;
     }
+
+    public function getTables()
+    {
+        $con = $GLOBALS["con"];
+
+        $sql = "SELECT * FROM `table`
+                WHERE table_status = 'Vacant'";
+
+        $result = $con->query($sql) or die($con->error);
+        return $result;
+    }
+
+    // Save Order to `orders` table
+    public function saveOrder($receipt_no, $customer_id, $payment_status, $sub_total_amount, $discount, $total_amount, $paid_amount, $balance, $due_amount, $payment_method, $order_type, $table_id)
+{
+    $con = $GLOBALS["con"];
+    $order_status = "Pending";
+
+    // Set payment_date to NULL if Unpaid
+    $payment_date = ($payment_status === 'Unpaid') ? null : date('Y-m-d H:i:s');
+
+    // Set table_id to NULL if order type is not Dine-In
+    if ($order_type !== 'Dine-In') {
+        $table_id = null;
+    }
+
+    $stmt = $con->prepare("INSERT INTO orders (
+        receipt_no, customer_id, payment_status, sub_total_amount, discount, total_amount, paid_amount, balance,
+        due_amount, payment_method, order_type, order_status, table_id, payment_date
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
+    // Bind all 14 values, allowing nulls for table_id and payment_date
+    $stmt->bind_param(
+        "sisddddddsssss",
+        $receipt_no,
+        $customer_id,
+        $payment_status,
+        $sub_total_amount,
+        $discount,
+        $total_amount,
+        $paid_amount,
+        $balance,
+        $due_amount,
+        $payment_method,
+        $order_type,
+        $order_status,
+        $table_id,
+        $payment_date
+    );
+
+    return $stmt->execute();
+}
+
+
+
+    // Save items to `order_item` table
+    public function saveOrderItem($receipt_no, $item_code, $item_name, $item_price, $item_qty, $total_price)
+    {
+        $con = $GLOBALS["con"];
+        $stmt = $con->prepare("INSERT INTO order_item (receipt_no, item_code, item_name, item_price, item_qty, total_price)
+                               VALUES (?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("sssddd", $receipt_no, $item_code, $item_name, $item_price, $item_qty, $total_price);
+        return $stmt->execute();
+    }
+
+    // Subtract sold quantity from item table
+    public function updateItemQty($item_code, $qty_sold)
+    {
+        $con = $GLOBALS["con"];
+        // Ensure quantity will not go below 0
+        $stmt = $con->prepare("UPDATE item 
+                               SET item_qty = CASE 
+                                   WHEN item_qty >= ? THEN item_qty - ? 
+                                   ELSE item_qty 
+                               END 
+                               WHERE item_code = ?");
+        $stmt->bind_param("dds", $qty_sold, $qty_sold, $item_code);
+        return $stmt->execute();
+    }
+
+    // Set table_status to Seated
+    public function vacateTable($table_id)
+    {
+        $con = $GLOBALS["con"];
+        $stmt = $con->prepare("UPDATE `table` SET table_status = 'Seated' WHERE table_id = ?");
+        $stmt->bind_param("i", $table_id);
+        return $stmt->execute();
+    }
+
+    // Save to `payments` table
+    public function savePayment($payment_id, $receipt_no, $total_amount, $paid_amount, $balance, $due_amount, $payment_method)
+    {
+        $con = $GLOBALS["con"];
+        $stmt = $con->prepare("INSERT INTO payments (payment_id, receipt_no, total_amount, paid_amount, balance, due_amount, payment_method)
+                               VALUES (?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("isdddss", $payment_id, $receipt_no, $total_amount, $paid_amount, $balance, $due_amount, $payment_method);
+        return $stmt->execute();
+    }
+
+    // Get next payment ID
+    public function getNextPaymentId($receipt_no)
+{
+    $con = $GLOBALS["con"];
+    $stmt = $con->prepare("SELECT MAX(payment_id) AS max_id FROM payments WHERE receipt_no = ?");
+    $stmt->bind_param("s", $receipt_no);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+
+    return ($row['max_id']) ? $row['max_id'] + 1 : 1;
+}
+
+    // Update Invoice Number
+    public function updateInvoiceNo()
+    {
+        $con = $GLOBALS["con"];
+        return $con->query("UPDATE temp_invoice SET value = value + 1");
+    }
 }

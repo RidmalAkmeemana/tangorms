@@ -5,6 +5,7 @@ include_once '../commons/helpers/permission_helper.php';
 
 checkFunctionPermission($_SERVER['PHP_SELF']);
 
+$userrow = $_SESSION["user"];
 $roomObj = new Room();
 
 if (!isset($_GET["room_id"])) {
@@ -110,7 +111,7 @@ $roomRow = $roomResult->fetch_assoc();
 
                 <div class="col-md-2"><label class="control-label">Room Layout</label></div>
                     <div class="col-md-4">
-                        <input type="file" class="form-control" name="room_layout" id="room_layout" onchange="displayImage(this);" />
+                        <input type="file" class="form-control" name="room_layout" id="room_layout" required onchange="displayImage(this);" />
                         <?php if (!empty($roomRow["room_layout"])): ?>
                             <img id="img_prev" src="../images/layouts/<?= $roomRow["room_layout"] ?>" width="60" height="60">
                         <?php endif; ?>

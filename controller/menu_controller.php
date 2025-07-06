@@ -40,7 +40,6 @@ switch ($status) {
     break;
 
     case "delete":
-    session_start();
 
     // Ensure user is logged in
     if (!isset($_SESSION['user'])) {
@@ -50,7 +49,7 @@ switch ($status) {
 
     // Validate category_id parameter
     if (!isset($_GET['category_id'])) {
-        echo "<script>alert('Missing Room ID!'); window.location.href = '../view/view-categories.php';</script>";
+        echo "<script>alert('Missing Category ID!'); window.location.href = '../view/view-categories.php';</script>";
         exit;
     }
 
@@ -160,6 +159,7 @@ switch ($status) {
 
         case "add_item":
 
+        $item_code = $_POST["item_code"];
         $item_name = $_POST["item_name"];
         $item_description = $_POST["item_description"];
         $item_price = $_POST["item_price"];
@@ -168,6 +168,9 @@ switch ($status) {
         $item_image = $_FILES["item_image"];
 
         try {
+            if ($item_code == "") {
+                throw new Exception("Item Code Cannot be Empty");
+            }
             if ($item_name == "") {
                 throw new Exception("Item Name Cannot be Empty");
             }
@@ -199,15 +202,15 @@ switch ($status) {
 
                 if ($item_image["name"] != "") {
 
-                    $file_name = time() . "_" . $user_image["name"];
+                    $file_name = time() . "_" . $item_image["name"];
                     $path = "../images/item_images/$file_name";
-                    move_uploaded_file($room_layout["tmp_name"], $path);
+                    move_uploaded_file($item_image["tmp_name"], $path);
                 }
             }
 
             // Passing data to the addItem() of the Module page
 
-            $item_id = $menuObj->addItems($item_name, $item_description, $item_price, $item_category, $item_qty, $file_name);
+            $item_id = $menuObj->addItems($item_code, $item_name, $item_description, $item_price, $item_category, $item_qty, $file_name);
 
             $msg = "$item_name Successfully Added !! ";
             $msg = base64_encode($msg);
@@ -229,4 +232,151 @@ switch ($status) {
 
 
         break;
+
+        case "activate-item":
+            $item_id = $_GET['item_id'];
+            $item_id = base64_decode($item_id);
+            $menuObj->activateItems($item_id);
+    
+            $msg = "Successfully Activated !!!";
+            $msg = base64_encode($msg);
+            ?>
+            <script>
+                window.location = "../view/view-items.php?msg=<?php echo $msg; ?>";
+            </script>
+        <?php
+            break;
+    
+        case "deactivate-item":
+            $item_id = $_GET['item_id'];
+            $item_id = base64_decode($item_id);
+            $menuObj->deactivateItems($item_id);
+    
+            $msg = "Successfully Dectivated !!!";
+            $msg = base64_encode($msg);
+        ?>
+            <script>
+                window.location = "../view/view-items.php?msg=<?php echo $msg; ?>";
+            </script>
+        <?php
+            break;
+
+            case "update_menu":
+
+                $item_id = $_POST["item_id"];
+                $item_name = $_POST["item_name"];
+                $item_description = $_POST["item_description"];
+                $item_category = $_POST["item_category"];
+                $item_image = $_FILES["item_image"];
+        
+                try {
+                    if ($item_id == "") {
+                        throw new Exception("Item Id Cannot be Empty");
+                    }
+        
+                    if ($item_name == "") {
+                        throw new Exception("Item Name be Empty");
+                    }
+        
+                    if ($item_description == "") {
+                        throw new Exception("Item Description be Empty");
+                    }
+                    if ($item_category == "") {
+                        throw new Exception("Item Category be Empty");
+                    }
+                    if ($item_image == "") {
+                        throw new Exception("Item Image be Empty");
+                    }
+        
+                    $itemResult = $menuObj->getItem($item_id);
+                    $itemRow = $itemResult->fetch_assoc();
+        
+                    //uploading image
+        
+                    $file_name = "";
+                    if (isset($_FILES["item_image"])) {
+        
+                        if ($item_image["name"] != "") {
+        
+                            $file_name = time() . "_" . $item_image["name"];
+                            $path = "../images/item_images/$file_name";
+                            move_uploaded_file($item_image["tmp_name"], $path);
+                        }
+                    }
+                    
+                    //update item
+                    $menuObj->UpdateItem($item_id, $item_name, $item_description, $item_category, $file_name);
+        
+                    $msg = "Item Updated Successfully";
+                    $msg = base64_encode($msg);
+                ?>
+                    <script>
+                        window.location = "../view/view-items.php?msg=<?php echo $msg; ?>";
+                    </script>
+                <?php
+        
+                } catch (Exception $ex) {
+        
+                    $msg = $ex->getMessage();
+                    $msg = base64_encode($msg);
+                ?>
+                    <script>
+                        window.location = "../view/edit-item.php?msg=<?php echo $msg; ?>";
+                    </script>
+        <?php
+                }
+        
+        
+                break;
+
+                case "delete-item":
+
+                    // Ensure user is logged in
+                    if (!isset($_SESSION['user'])) {
+                        echo "<script>alert('Unauthorized access!'); window.location.href = '../view/login.php';</script>";
+                        exit;
+                    }
+                
+                    // Validate item_id parameter
+                    if (!isset($_GET['item_id'])) {
+                        echo "<script>alert('Missing Item ID!'); window.location.href = '../view/view-items.php';</script>";
+                        exit;
+                    }
+                
+                    $item_id = base64_decode($_GET['item_id']);
+                    $current_user_id = $_SESSION['user']['user_id'];
+                
+                    // Load user model to check permissions
+                    include_once '../model/user_model.php';
+                    $userObj = new User();
+                    $accessibleFunctions = $userObj->getAccessibleFunctionsWithModule($current_user_id);
+                
+                    // Check for delete permission (assuming function_id 26 = delete room)
+                    $hasDeletePermission = false;
+                    foreach ($accessibleFunctions as $func) {
+                        if (
+                            strtolower($func['function_url']) === 'menu_controller.php' &&
+                            (int)$func['function_id'] === 93
+                        ) {
+                            $hasDeletePermission = true;
+                            break;
+                        }
+                    }
+                
+                    // If no permission
+                    if (!$hasDeletePermission) {
+                        echo "<script>alert('Access Denied!'); window.location.href = '../view/dashboard.php';</script>";
+                        exit;
+                    }
+                
+                    try {
+                        $menuObj->deleteItem($item_id); // Ensure this function updates item_status or actually deletes
+                        $msg = base64_encode("item deleted successfully.");
+                        echo "<script>window.location.href = '../view/view-items.php?msg=$msg';</script>";
+                    } catch (Exception $e) {
+                        $error = base64_encode("Error deleting item: " . $e->getMessage());
+                        echo "<script>window.location.href = '../view/view-items.php?msg=$error';</script>";
+                    }
+                
+                    break;
 }

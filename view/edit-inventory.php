@@ -1,24 +1,23 @@
 <?php
 include '../commons/session.php';
+include_once '../model/inventory_model.php';
 include_once '../commons/helpers/permission_helper.php';
-include_once '../model/menu_model.php';
 
 checkFunctionPermission($_SERVER['PHP_SELF']);
 
 $userrow = $_SESSION["user"];
-$user_id = $userrow["user_id"];
+$inventoryObj = new Inventory();
 
-// Get user roles for dropdown
-$menuObj = new Menu();
-$categoryResult = $menuObj->getAllCategory();
+$categoryResult = $inventoryObj->getAllCategory();
+$item_id = base64_decode($_GET["item_id"]);
+$inventoryResult = $inventoryObj->getInventory($item_id);
+$inventoryRow = $inventoryResult->fetch_assoc();
 ?>
-<!DOCTYPE html>
-<html lang="en">
+
+<html>
 
 <head>
-    <meta charset="UTF-8">
-    <title>Add Item</title>
-    <?php include_once "../includes/bootstrap_css_includes.php"; ?>
+    <?php include_once "../includes/bootstrap_css_includes.php" ?>
     <style>
         body {
             background-color: #5c5b5b;
@@ -105,16 +104,17 @@ $categoryResult = $menuObj->getAllCategory();
 
 <body>
     <div class="container">
-        <?php $pageName = "MENU MANAGEMENT";
-        include_once "../includes/header_row_includes.php"; ?>
+        <?php $pageName = "INVENTORY MANAGEMENT"; ?>
+        <?php include_once "../includes/header_row_includes.php"; ?>
+        <?php require 'inventory-management-sidebar.php'; ?>
 
-        <div class="row">
-            <?php require 'menu-management-sidebar.php'; ?>
+        <form action="../controller/inventory_controller.php?status=update_inventory" method="post" enctype="multipart/form-data">
+            <div class="col-md-9">
 
-            <form class="col-md-9" action="../controller/menu_controller.php?status=add_item" method="post" enctype="multipart/form-data">
+                <!-- Message Row -->
                 <?php if (isset($_GET['msg'])): ?>
-                    <div class="row">
-                        <div class="col-md-8 col-md-offset-2 alert alert-danger text-center">
+                    <div class="row form-section">
+                        <div class="col-md-12 alert alert-danger text-center">
                             <?= base64_decode($_GET['msg']); ?>
                         </div>
                     </div>
@@ -122,53 +122,65 @@ $categoryResult = $menuObj->getAllCategory();
 
                 <!-- Item Code -->
                 <div class="row mt-3">
+                    <input type="hidden" name="item_id" value="<?= $inventoryRow['item_id']; ?>">
                     <div class="col-md-2"><label class="control-label">Item Code</label><label class="text-danger">*</label></div>
-                    <div class="col-md-10"><input type="text" class="form-control" name="item_code" id="item_code" required /></div>
+                    <div class="col-md-10"><input disabled type="text" class="form-control" name="item_code" id="item_code" value="<?= $inventoryRow["item_code"]; ?>" required /></div>
                 </div>
 
                 <!-- Item Image & Name -->
                 <div class="row mt-3">
                     <div class="col-md-2"><label class="control-label">Item Name</label><label class="text-danger">*</label></div>
-                    <div class="col-md-4"><input type="text" class="form-control" name="item_name" id="item_name" required /></div>
+                    <div class="col-md-4"><input disabled type="text" class="form-control" name="item_name" id="item_name" value="<?= $inventoryRow["item_name"]; ?>" required /></div>
                     <div class="col-md-2"><label class="control-label">Item Description</label><label class="text-danger">*</label></div>
-                    <div class="col-md-4"><textarea type="text" class="form-control" name="item_description" id="item_description" required></textarea></div>
+                    <div class="col-md-4"><textarea disabled type="text" class="form-control" name="item_description" id="item_description" required><?= $inventoryRow["item_description"]; ?></textarea></div>
                 </div>
 
                 <div class="row mt-3">
                     <div class="col-md-2"><label class="control-label">Unit Price</label><label class="text-danger">*</label></div>
-                    <div class="col-md-4"><input type="number" step="any" class="form-control" name="item_price" id="item_price" required /></div>
+                    <div class="col-md-4"><input type="number" step="any" class="form-control" name="item_price" id="item_price" value="<?= $inventoryRow["item_price"]; ?>" required /></div>
                     <div class="col-md-2"><label class="control-label">Item Category</label><label class="text-danger">*</label></div>
-                    <div class="col-md-4"><select name="item_category" id="item_category" class="form-control" required>
+                    <div class="col-md-4"><select disabled name="item_category" id="item_category" class="form-control" required>
                             <option value="">---Select Category---</option>
                             <?php while ($categoryRow = $categoryResult->fetch_assoc()): ?>
-                                <option value="<?= $categoryRow['category_id']; ?>"><?= $categoryRow['category_name']; ?></option>
-                            <?php endwhile; ?>
+                            <option value="<?= $categoryRow["category_id"]; ?>" <?= ($categoryRow["category_id"] == $inventoryRow["item_category"]) ? "selected" : "" ?>>
+                                <?= htmlspecialchars($categoryRow["category_name"]); ?>
+                            </option>
+                        <?php endwhile; ?>
                         </select>
                     </div>
                 </div>
 
                 <div class="row mt-3">
                     <div class="col-md-2"><label class="control-label">Qty</label><label class="text-danger">*</label></div>
-                    <div class="col-md-4"><input type="number" class="form-control" name="item_qty" id="item_qty" required /></div>
+                    <div class="col-md-4"><input type="number" class="form-control" name="item_qty" id="item_qty" value="<?= $inventoryRow["item_qty"]; ?>" required /></div>
                     <div class="col-md-2"><label class="control-label">Item Image</label><label class="text-danger">*</label></div>
-                    <div class="col-md-4"><input type="file" class="form-control" name="item_image" id="item_image" onchange="displayImage(this);" required /></div>
+                    <div class="col-md-4">
+                        <?php if (!empty($inventoryRow["item_image"])): ?>
+                            <!-- Show disabled input with current file name -->
+                            <input type="text" class="form-control" value="<?= htmlspecialchars($inventoryRow["item_image"]) ?>" disabled />
+
+                            <!-- Hidden actual file input for image update if needed -->
+                            <input type="file" class="form-control mt-2" name="item_image" id="item_image" onchange="displayImage(this);" style="display: none;" />
+
+                            <!-- Preview Image -->
+                            <img id="img_prev" src="../images/item_images/<?= htmlspecialchars($inventoryRow["item_image"]) ?>" width="60" height="60" style="margin-top: 10px; display:block;">
+                        <?php else: ?>
+                            <!-- No existing image: normal file input -->
+                            <input type="file" class="form-control" name="item_image" id="item_image" required onchange="displayImage(this);" />
+                        <?php endif; ?>
+                    </div>
                 </div>
-        </div>
 
-        <!-- Dynamic Functions Placeholder -->
-        <div class="row mt-3">
-            <div id="display_functions" class="col-md-12"></div>
-        </div>
+                <!-- Submit Buttons -->
+                <div class="row mt-3 text-center">
+                    <div class="col-md-12">
+                        <input type="submit" class="btn btn-primary" value="Submit">
+                        <input type="reset" class="btn btn-danger" value="Reset">
+                    </div>
+                </div>
 
-        <!-- Submit / Reset Buttons -->
-        <div class="row mt-4">
-            <div class="col-md-12 text-center">
-                <input type="submit" class="btn btn-primary" value="Submit" />
-                <input type="reset" class="btn btn-danger" value="Reset" />
             </div>
-        </div>
-    </div>
-    </form>
+        </form>
     </div>
 
     <script src="../js/jquery-3.7.1.js"></script>
@@ -176,14 +188,9 @@ $categoryResult = $menuObj->getAllCategory();
     <script>
         function displayImage(input) {
             if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = e => {
-                    if (!document.getElementById('img_prev')) {
-                        const img = document.createElement('img');
-                        img.id = 'img_prev';
-                        input.parentNode.appendChild(img);
-                    }
-                    document.getElementById('img_prev').src = e.target.result;
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    $("#img_prev").attr('src', e.target.result).width(80).height(60);
                 };
                 reader.readAsDataURL(input.files[0]);
             }

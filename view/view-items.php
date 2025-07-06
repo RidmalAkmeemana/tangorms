@@ -14,8 +14,7 @@ $moduleObj = new Module();
 $menuObj = new Menu();
 
 $moduleResult = $moduleObj->getAllModules();
-$menuResult = $menuObj->getAllCategory();
-
+$itemResult = $menuObj->getAllItems();
 
 ?>
 
@@ -202,40 +201,54 @@ $menuResult = $menuObj->getAllCategory();
                         <table class="table table-bordered table-hover align-middle text-center table-striped" id="usertable">
                             <thead>
                                 <tr>
-                                    <th class="text-start" scope="col">Category Name</th>
-                                    <th class="text-center" scope="col">Status</th>
+                                    <th class="text-start" scope="col">Image</th>
+                                    <th class="text-start" scope="col">Item Code</th>
+                                    <th class="text-start" scope="col">Item Name</th>
+                                    <th class="text-start" scope="col">Item Price</th>
+                                    <th class="text-center" scope="col">Item Category</th>
+                                    <th class="text-center" scope="col">Item Status</th>
                                     <th class="text-center" scope="col">Is Enable</th>
                                     <th class="text-center" scope="col">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php while ($categoryRow = $menuResult->fetch_assoc()): ?>
+                                <?php while ($itemRow = $itemResult->fetch_assoc()): ?>
                                     <?php
-                                    $category_id = base64_encode($categoryRow["category_id"]);
-                                    $status = $categoryRow["category_status"] == 1 ? "Active" : "Deactive";
-                                    $status_class = $categoryRow["category_status"] == 1 ? "badge bg-success" : "badge bg-danger";
+                                    $img_path = "../images/item_images/";
+                                    $item_id = base64_encode($itemRow["item_id"]);
+                                    $img_file = empty($itemRow["item_image"]) ? "user.png" : $itemRow["item_image"];
+                                    $img_path .= $img_file;
+
+                                    $status = $itemRow["item_status"] == 1 ? "Active" : "Deactive";
+                                    $status_class = $itemRow["item_status"] == 1 ? "badge bg-success" : "badge bg-danger";
                                     ?>
                                     <tr>
-                                        <td class="text-start pe-3"><?= htmlspecialchars($categoryRow["category_name"]) ?></td>
+                                        <td>
+                                            <img src="<?= $img_path ?>" class="rounded-circle user-img" width="50" height="50" alt="User">
+                                        </td>
+                                        <td class="text-start pe-3"><?= htmlspecialchars($itemRow["item_code"]) ?></td>
+                                        <td class="text-start pe-3"><?= htmlspecialchars($itemRow["item_name"]) ?></td>
+                                        <td class="text-start pe-3"><?= htmlspecialchars($itemRow["item_price"]) ?></td>
+                                        <td class="text-start pe-3"><?= htmlspecialchars($itemRow["category_name"]) ?></td>
                                         <td>
                                             <span class="<?= $status_class ?> px-3 py-1"><?= $status ?></span>
                                         </td>
                                         <td>
-                                            <a href="../controller/menu_controller.php?status=<?= $categoryRow["category_status"] == 1 ? 'deactivate' : 'activate' ?>&category_id=<?= $category_id ?>"
-                                                class="btn btn-sm <?= $categoryRow["category_status"] == 1 ? 'btn-danger' : 'btn-success' ?>">
-                                                <i class="fa <?= $categoryRow["category_status"] == 1 ? 'fa-times' : 'fa-check-circle' ?>"></i>
-                                                <?= $categoryRow["category_status"] == 1 ? 'Deactivate' : 'Activate' ?>
+                                            <a href="../controller/menu_controller.php?status=<?= $itemRow["item_status"] == 1 ? 'deactivate-item' : 'activate-item' ?>&item_id=<?= $item_id ?>"
+                                                class="btn btn-sm <?= $itemRow["item_status"] == 1 ? 'btn-danger' : 'btn-success' ?>">
+                                                <i class="fa <?= $itemRow["item_status"] == 1 ? 'fa-times' : 'fa-check-circle' ?>"></i>
+                                                <?= $itemRow["item_status"] == 1 ? 'Deactivate' : 'Activate' ?>
                                             </a>
                                         </td>
                                         <td>
                                             <div class="d-flex flex-wrap gap-2 justify-content-center">
-                                                <a href="view-category.php?category_id=<?= $category_id ?>" class="btn btn-sm btn-info">
+                                                <a href="view-item.php?item_id=<?= $item_id ?>" class="btn btn-sm btn-info">
                                                     <i class="fa fa-eye" aria-hidden="true"></i>
                                                 </a>
-                                                <a href="edit-category.php?category_id=<?= $category_id ?>" class="btn btn-sm btn-warning">
+                                                <a href="edit-item.php?item_id=<?= $item_id ?>" class="btn btn-sm btn-warning">
                                                     <i class="fa fa-pencil" aria-hidden="true"></i>
                                                 </a>
-                                                <a href="../controller/menu_controller.php?status=delete&category_id=<?= $category_id ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure to delete this category?');">
+                                                <a href="../controller/menu_controller.php?status=delete-item&item_id=<?= $item_id ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure to delete this item?');">
                                                     <i class="fa fa-trash" aria-hidden="true"></i>
                                                 </a>
                                             </div>

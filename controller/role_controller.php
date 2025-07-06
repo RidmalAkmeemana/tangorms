@@ -21,7 +21,6 @@ switch ($status) {
     case "add_role":
 
         $role_name = $_POST["role_name"];
-        $role_status = $_POST["role_status"];
 
         try {
             if ($role_name == "") {

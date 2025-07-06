@@ -3,7 +3,7 @@
 include_once '../commons/session.php';
 include_once '../commons/helpers/permission_helper.php';
 include_once '../model/module_model.php';
-include_once '../model/menu_model.php';
+include_once '../model/inventory_model.php';
 
 checkFunctionPermission($_SERVER['PHP_SELF']);
 
@@ -11,11 +11,10 @@ checkFunctionPermission($_SERVER['PHP_SELF']);
 $userrow = $_SESSION["user"];
 
 $moduleObj = new Module();
-$menuObj = new Menu();
+$inventoryObj = new Inventory();
 
 $moduleResult = $moduleObj->getAllModules();
-$menuResult = $menuObj->getAllCategory();
-
+$inventoryResult = $inventoryObj->getAllInventories();
 
 ?>
 
@@ -175,9 +174,9 @@ $menuResult = $menuObj->getAllCategory();
 
 <body>
     <div class="container">
-        <?php $pageName = "MENU MANAGEMENT" ?>
+        <?php $pageName = "INVENTORY & STOCK MANAGEMENT" ?>
         <?php include_once "../includes/header_row_includes.php"; ?>
-        <?php require 'menu-management-sidebar.php'; ?>
+        <?php require 'inventory-management-sidebar.php'; ?>
 
         <div class="col-md-9">
             <?php
@@ -202,41 +201,45 @@ $menuResult = $menuObj->getAllCategory();
                         <table class="table table-bordered table-hover align-middle text-center table-striped" id="usertable">
                             <thead>
                                 <tr>
-                                    <th class="text-start" scope="col">Category Name</th>
+                                    <th class="text-start" scope="col">Image</th>
+                                    <th class="text-start" scope="col">Item Code</th>
+                                    <th class="text-start" scope="col">Item Name</th>
+                                    <th class="text-start" scope="col">Item Price</th>
+                                    <th class="text-center" scope="col">Item Category</th>
+                                    <th class="text-center" scope="col">Qty</th>
                                     <th class="text-center" scope="col">Status</th>
-                                    <th class="text-center" scope="col">Is Enable</th>
+                                    <th class="text-center" scope="col">Updated On</th>
                                     <th class="text-center" scope="col">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php while ($categoryRow = $menuResult->fetch_assoc()): ?>
+                                <?php while ($inventoryRow = $inventoryResult->fetch_assoc()): ?>
                                     <?php
-                                    $category_id = base64_encode($categoryRow["category_id"]);
-                                    $status = $categoryRow["category_status"] == 1 ? "Active" : "Deactive";
-                                    $status_class = $categoryRow["category_status"] == 1 ? "badge bg-success" : "badge bg-danger";
+                                    $img_path = "../images/item_images/";
+                                    $item_id = base64_encode($inventoryRow["item_id"]);
+                                    $img_file = empty($inventoryRow["item_image"]) ? "user.png" : $inventoryRow["item_image"];
+                                    $img_path .= $img_file;
+
+                                    $status = $inventoryRow["item_status"] == 1 ? "Active" : "Deactive";
+                                    $status_class = $inventoryRow["item_status"] == 1 ? "badge bg-success" : "badge bg-danger";
                                     ?>
                                     <tr>
-                                        <td class="text-start pe-3"><?= htmlspecialchars($categoryRow["category_name"]) ?></td>
+                                        <td>
+                                            <img src="<?= $img_path ?>" class="rounded-circle user-img" width="50" height="50" alt="User">
+                                        </td>
+                                        <td class="text-start pe-3"><?= htmlspecialchars($inventoryRow["item_code"]) ?></td>
+                                        <td class="text-start pe-3"><?= htmlspecialchars($inventoryRow["item_name"]) ?></td>
+                                        <td class="text-start pe-3"><?= htmlspecialchars($inventoryRow["item_price"]) ?></td>
+                                        <td class="text-start pe-3"><?= htmlspecialchars($inventoryRow["category_name"]) ?></td>
+                                        <td class="text-start pe-3"><?= htmlspecialchars($inventoryRow["item_qty"]) ?></td>
                                         <td>
                                             <span class="<?= $status_class ?> px-3 py-1"><?= $status ?></span>
                                         </td>
-                                        <td>
-                                            <a href="../controller/menu_controller.php?status=<?= $categoryRow["category_status"] == 1 ? 'deactivate' : 'activate' ?>&category_id=<?= $category_id ?>"
-                                                class="btn btn-sm <?= $categoryRow["category_status"] == 1 ? 'btn-danger' : 'btn-success' ?>">
-                                                <i class="fa <?= $categoryRow["category_status"] == 1 ? 'fa-times' : 'fa-check-circle' ?>"></i>
-                                                <?= $categoryRow["category_status"] == 1 ? 'Deactivate' : 'Activate' ?>
-                                            </a>
-                                        </td>
+                                        <td class="text-start pe-3"><?= htmlspecialchars($inventoryRow["last_update"]) ?></td>
                                         <td>
                                             <div class="d-flex flex-wrap gap-2 justify-content-center">
-                                                <a href="view-category.php?category_id=<?= $category_id ?>" class="btn btn-sm btn-info">
-                                                    <i class="fa fa-eye" aria-hidden="true"></i>
-                                                </a>
-                                                <a href="edit-category.php?category_id=<?= $category_id ?>" class="btn btn-sm btn-warning">
+                                                <a href="edit-inventory.php?item_id=<?= $item_id ?>" class="btn btn-sm btn-warning">
                                                     <i class="fa fa-pencil" aria-hidden="true"></i>
-                                                </a>
-                                                <a href="../controller/menu_controller.php?status=delete&category_id=<?= $category_id ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure to delete this category?');">
-                                                    <i class="fa fa-trash" aria-hidden="true"></i>
                                                 </a>
                                             </div>
                                         </td>

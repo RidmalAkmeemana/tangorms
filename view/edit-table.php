@@ -5,6 +5,7 @@ include_once '../commons/helpers/permission_helper.php';
 
 checkFunctionPermission($_SERVER['PHP_SELF']);
 
+$userrow = $_SESSION["user"];
 $tableObj = new Table();
 $roomObj = new Table(); // assuming getAllRooms is also in Table class
 

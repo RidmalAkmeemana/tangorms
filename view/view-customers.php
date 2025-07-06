@@ -3,7 +3,7 @@
 include_once '../commons/session.php';
 include_once '../commons/helpers/permission_helper.php';
 include_once '../model/module_model.php';
-include_once '../model/menu_model.php';
+include_once '../model/customer_model.php';
 
 checkFunctionPermission($_SERVER['PHP_SELF']);
 
@@ -11,11 +11,10 @@ checkFunctionPermission($_SERVER['PHP_SELF']);
 $userrow = $_SESSION["user"];
 
 $moduleObj = new Module();
-$menuObj = new Menu();
+$customerObj = new Customer();
 
 $moduleResult = $moduleObj->getAllModules();
-$menuResult = $menuObj->getAllCategory();
-
+$customerResult = $customerObj->getAllCustomers();
 
 ?>
 
@@ -175,9 +174,9 @@ $menuResult = $menuObj->getAllCategory();
 
 <body>
     <div class="container">
-        <?php $pageName = "MENU MANAGEMENT" ?>
+        <?php $pageName = "POS MANAGEMENT" ?>
         <?php include_once "../includes/header_row_includes.php"; ?>
-        <?php require 'menu-management-sidebar.php'; ?>
+        <?php require 'pos-management-sidebar.php'; ?>
 
         <div class="col-md-9">
             <?php
@@ -202,40 +201,51 @@ $menuResult = $menuObj->getAllCategory();
                         <table class="table table-bordered table-hover align-middle text-center table-striped" id="usertable">
                             <thead>
                                 <tr>
-                                    <th class="text-start" scope="col">Category Name</th>
-                                    <th class="text-center" scope="col">Status</th>
+                                    <th class="text-start" scope="col">Customer NIC</th>
+                                    <th class="text-start" scope="col">Customer Name</th>
+                                    <th class="text-start" scope="col">Customer Mobile</th>
+                                    <th class="text-center" scope="col">Customer Address</th>
+                                    <th class="text-center" scope="col">Customer Status</th>
                                     <th class="text-center" scope="col">Is Enable</th>
                                     <th class="text-center" scope="col">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php while ($categoryRow = $menuResult->fetch_assoc()): ?>
+                                <?php while ($customerRow = $customerResult->fetch_assoc()): ?>
                                     <?php
-                                    $category_id = base64_encode($categoryRow["category_id"]);
-                                    $status = $categoryRow["category_status"] == 1 ? "Active" : "Deactive";
-                                    $status_class = $categoryRow["category_status"] == 1 ? "badge bg-success" : "badge bg-danger";
+
+                                    $customer_id = base64_encode($customerRow["customer_id"]);
+
+                                    $status = $customerRow["customer_status"] == 1 ? "Active" : "Deactive";
+                                    $status_class = $customerRow["customer_status"] == 1 ? "badge bg-success" : "badge bg-danger";
+
                                     ?>
                                     <tr>
-                                        <td class="text-start pe-3"><?= htmlspecialchars($categoryRow["category_name"]) ?></td>
+                                        <td class="text-start pe-3"><?= htmlspecialchars($customerRow["customer_nic"]) ?></td>
+                                        <td class="text-start pe-3"><?= htmlspecialchars($customerRow["customer_name"]) ?></td>
+                                        <td class="text-start pe-3"><?= htmlspecialchars($customerRow["customer_mobile"]) ?></td>
+                                        <td class="text-start pe-3"><?= htmlspecialchars(!empty($customerRow["customer_address"]) ? $customerRow["customer_address"] : "N/A") ?></td>
                                         <td>
                                             <span class="<?= $status_class ?> px-3 py-1"><?= $status ?></span>
                                         </td>
                                         <td>
-                                            <a href="../controller/menu_controller.php?status=<?= $categoryRow["category_status"] == 1 ? 'deactivate' : 'activate' ?>&category_id=<?= $category_id ?>"
-                                                class="btn btn-sm <?= $categoryRow["category_status"] == 1 ? 'btn-danger' : 'btn-success' ?>">
-                                                <i class="fa <?= $categoryRow["category_status"] == 1 ? 'fa-times' : 'fa-check-circle' ?>"></i>
-                                                <?= $categoryRow["category_status"] == 1 ? 'Deactivate' : 'Activate' ?>
+                                            <a href="../controller/customer_controller.php?status=<?= $customerRow["customer_status"] == 1 ? 'deactivate' : 'activate' ?>&customer_id=<?= $customer_id ?>"
+                                                class="btn btn-sm <?= $customerRow["customer_status"] == 1 ? 'btn-danger' : 'btn-success' ?>">
+                                                <i class="fa <?= $customerRow["customer_status"] == 1 ? 'fa-times' : 'fa-check-circle' ?>"></i>
+                                                <?= $customerRow["customer_status"] == 1 ? 'Deactivate' : 'Activate' ?>
                                             </a>
                                         </td>
+
+
                                         <td>
                                             <div class="d-flex flex-wrap gap-2 justify-content-center">
-                                                <a href="view-category.php?category_id=<?= $category_id ?>" class="btn btn-sm btn-info">
+                                                <a href="view-customer.php?customer_id=<?= $customer_id ?>" class="btn btn-sm btn-info">
                                                     <i class="fa fa-eye" aria-hidden="true"></i>
                                                 </a>
-                                                <a href="edit-category.php?category_id=<?= $category_id ?>" class="btn btn-sm btn-warning">
+                                                <a href="edit-customer.php?customer_id=<?= $customer_id ?>" class="btn btn-sm btn-warning">
                                                     <i class="fa fa-pencil" aria-hidden="true"></i>
                                                 </a>
-                                                <a href="../controller/menu_controller.php?status=delete&category_id=<?= $category_id ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure to delete this category?');">
+                                                <a href="../controller/customer_controller.php?status=delete&customer_id=<?= $customer_id ?>" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure to delete this customer?');">
                                                     <i class="fa fa-trash" aria-hidden="true"></i>
                                                 </a>
                                             </div>

@@ -29,7 +29,7 @@ switch ($status) {
             }
 
             if ($room_layout == "") {
-                throw new Exception("Seat Count Cannot be Empty");
+                throw new Exception("Room Layout Cannot be Empty");
             }
 
             //uploading image
@@ -39,7 +39,7 @@ switch ($status) {
 
                 if ($room_layout["name"] != "") {
 
-                    $file_name = time() . "_" . $user_image["name"];
+                    $file_name = time() . "_" . $room_layout["name"];
                     $path = "../images/layouts/$file_name";
                     move_uploaded_file($room_layout["tmp_name"], $path);
                 }
@@ -49,7 +49,7 @@ switch ($status) {
 
             $room_id = $roomObj->addRoom($room_name, $file_name);
 
-            $msg = "$table_name Successfully Added !! ";
+            $msg = "$room_name Successfully Added !! ";
             $msg = base64_encode($msg);
     ?>
             <script>
@@ -99,7 +99,6 @@ switch ($status) {
         break;
 
     case "delete":
-    session_start();
 
     // Ensure user is logged in
     if (!isset($_SESSION['user'])) {

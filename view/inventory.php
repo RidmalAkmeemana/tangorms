@@ -2,7 +2,7 @@
 include_once '../commons/session.php';
 include_once '../commons/helpers/permission_helper.php';
 include_once '../model/module_model.php';
-include_once '../model/customer_model.php';
+include_once '../model/inventory_model.php';
 
 // Enforce permission check for both module and function
 checkFunctionPermission($_SERVER['PHP_SELF']);
@@ -10,14 +10,16 @@ checkFunctionPermission($_SERVER['PHP_SELF']);
 $userrow = $_SESSION["user"];
 $user_id = $userrow["user_id"];
 
-$customerObj = new Customer();
+$inventoryObj = new Inventory();
 
-$activeCustomers = $customerObj->getActiiveCustomers();
-$activeCustomerCount = $activeCustomers['active_customer_count'];
+$activeinventoryCounts = $inventoryObj->getActiveItemCounts();
+$activeitemCount = $activeinventoryCounts['active_item_count'];
 
-$inactiveCustomers = $customerObj->getInactiiveCustomers();
-$inactiveCustomerCount = $inactiveCustomers['inactive_customer_count'];
+$inactiveinventoryCounts = $inventoryObj->getInactiveItemCounts();
+$inactiveitemCount = $inactiveinventoryCounts['inactive_item_count'];
 
+$zeroactiveinventoryCounts = $inventoryObj->getZeroItemCounts();
+$zeroactiveitemCount = $zeroactiveinventoryCounts['zero_item_count'];
 
 ?>
 
@@ -61,25 +63,34 @@ $inactiveCustomerCount = $inactiveCustomers['inactive_customer_count'];
 
 <body>
     <div class="container">
-        <?php $pageName = "POS MANAGEMENT"; ?>
+        <?php $pageName = "INVENTORY & STOCK MANAGEMENT"; ?>
         <?php include_once "../includes/header_row_includes.php"; ?>
-        <?php require 'pos-management-sidebar.php'; ?>
+        <?php require 'inventory-management-sidebar.php'; ?>
 
         <div class="col-md-9 row">
             <div class="col-md-6">
                 <div class="panel panel-info" style="height:180px">
-                    <div class="panel-heading">No of Active Customers</div>
+                    <div class="panel-heading">No of Active Items</div>
                     <div class="panel-body">
-                        <h1 class="h1"><?= $activeCustomerCount; ?></h1>
+                        <h1 class="h1"><?= $activeitemCount; ?></h1>
                     </div>
                 </div>
             </div>
 
             <div class="col-md-6">
                 <div class="panel panel-info" style="height:180px">
-                    <div class="panel-heading">No of Active Customers</div>
+                    <div class="panel-heading">No of Inactive Items</div>
                     <div class="panel-body">
-                        <h1 class="h1"><?= $inactiveCustomerCount; ?></h1>
+                        <h1 class="h1"><?= $inactiveitemCount; ?></h1>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="panel panel-info" style="height:180px">
+                    <div class="panel-heading">No of Items with 0 Qty</div>
+                    <div class="panel-body">
+                        <h1 class="h1"><?= $zeroactiveitemCount; ?></h1>
                     </div>
                 </div>
             </div>

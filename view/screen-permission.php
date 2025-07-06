@@ -116,7 +116,7 @@ $allModules = $permissionObj->getAllModules();
                             if ($functionsResult && $functionsResult->num_rows > 0) {
                                 while ($func = $functionsResult->fetch_assoc()) {
                                     $functionList[] = $func;
-                                    if (in_array($func['function_id'], [1, 8, 14, 27])) {
+                                    if (in_array($func['function_id'], [1, 8, 14, 27, 95, 99])) {
                                         $masterFunctions[] = $func['function_id'];
                                     }
                                 }

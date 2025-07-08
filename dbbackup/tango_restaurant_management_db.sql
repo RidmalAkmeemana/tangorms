@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 06, 2025 at 10:02 PM
+-- Generation Time: Jul 08, 2025 at 08:18 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -142,7 +142,10 @@ INSERT INTO `function` (`function_id`, `function_name`, `function_url`, `module_
 (104, 'Customer Report', 'customer-report.php', 4, 1),
 (105, 'View Customer', 'view-customer.php', 4, 1),
 (106, 'Edit Customer', 'edit-customer.php', 4, 1),
-(107, 'New Sale', 'pos-sale.php', 4, 1);
+(107, 'New Sale', 'pos-sale.php', 4, 1),
+(108, 'Duplicate Receipt', 'duplicate-receipt.php', 4, 1),
+(109, 'View Orders', 'view-orders.php', 4, 1),
+(110, 'Edit Order', 'edit-order.php', 4, 1);
 
 -- --------------------------------------------------------
 
@@ -168,8 +171,8 @@ CREATE TABLE `item` (
 --
 
 INSERT INTO `item` (`item_id`, `item_code`, `item_name`, `item_description`, `item_price`, `item_category`, `item_image`, `item_qty`, `item_status`, `last_update`) VALUES
-(9, 'BUN-B01', 'Breakfast Bun ', 'Breakfast Bun', 150.00, 1, '1751781248_1751690007_images.jpeg', 4, 1, '2025-07-06 19:59:27'),
-(10, 'BUN-L01', 'Lunch Bun', 'Lunch Bun', 250.00, 2, '1751705272_1751690007_images.jpeg', 6, 1, '2025-07-06 19:59:27'),
+(9, 'BUN-B01', 'Breakfast Bun ', 'Breakfast Bun', 150.00, 1, '1751781248_1751690007_images.jpeg', 3, 1, '2025-07-07 18:46:41'),
+(10, 'BUN-L01', 'Lunch Bun', 'Lunch Bun', 250.00, 2, '1751705272_1751690007_images.jpeg', 4, 1, '2025-07-07 17:45:39'),
 (11, 'BUN-D01', 'Dinner Bun', 'Dinner Bun', 100.00, 3, '1751705220_1751690007_images.jpeg', 10, -1, '2025-07-05 09:12:07'),
 (13, 'BRD005', 'Bun', 'Bun', 100.00, 3, '1751708170_1751690007_images.jpeg', 11, -1, '2025-07-05 09:36:50'),
 (14, 'BUN-L013', 'Bread', '22', 22.00, 1, '1751708164_1751690007_images.jpeg', 22, -1, '2025-07-05 09:36:47');
@@ -265,8 +268,19 @@ CREATE TABLE `orders` (
 --
 
 INSERT INTO `orders` (`Id`, `receipt_no`, `customer_id`, `payment_status`, `sub_total_amount`, `discount`, `total_amount`, `paid_amount`, `balance`, `due_amount`, `payment_method`, `order_type`, `order_status`, `reason`, `table_id`, `invoice_date`, `payment_date`) VALUES
-(58, 'TANGOREC00001', 2, 'Fully Paid', 800.00, 0.00, 800.00, 800.00, 0.00, 0.00, 'Cash', 'Dine-In', 'Pending', NULL, 7, '2025-07-06 19:58:48', '2025-07-06 16:28:48'),
-(59, 'TANGOREC00002', 5, 'Unpaid', 1100.00, 0.00, 1100.00, 0.00, 0.00, 1100.00, 'N/A', 'Dine-In', 'Pending', NULL, 8, '2025-07-06 19:59:27', NULL);
+(58, 'TANGOREC00001', 2, 'Partially Paid', 800.00, 0.00, 800.00, 800.00, 0.00, 0.00, 'Cash', 'Dine-In', 'Pending', NULL, 7, '2025-07-06 19:58:48', '2025-07-06 16:28:48'),
+(59, 'TANGOREC00002', 5, 'Unpaid', 1100.00, 0.00, 1100.00, 0.00, 0.00, 1100.00, 'N/A', 'Dine-In', 'Pending', NULL, 8, '2025-07-06 19:59:27', NULL),
+(60, 'TANGOREC00003', 2, 'Unpaid', 600.00, 0.00, 600.00, 0.00, 0.00, 600.00, 'N/A', 'Dine-In', 'Pending', NULL, 9, '2025-07-07 17:28:27', NULL),
+(61, 'TANGOREC00004', 2, 'Unpaid', 250.00, 0.00, 250.00, 0.00, 0.00, 250.00, 'N/A', 'Delivery', 'Pending', NULL, NULL, '2025-07-07 17:29:58', NULL),
+(62, 'TANGOREC00005', 5, 'Unpaid', 250.00, 0.00, 250.00, 0.00, 0.00, 250.00, 'N/A', 'Delivery', 'Pending', NULL, NULL, '2025-07-07 17:31:42', NULL),
+(63, 'TANGOREC00006', 2, 'Unpaid', 250.00, 0.00, 250.00, 0.00, 0.00, 250.00, 'N/A', 'Delivery', 'Pending', NULL, NULL, '2025-07-07 17:38:42', NULL),
+(64, 'TANGOREC00007', 2, 'Fully Paid', 250.00, 0.00, 250.00, 300.00, 50.00, 0.00, 'Cash', 'Dine-In', 'Pending', NULL, 10, '2025-07-07 17:40:15', '2025-07-07 14:10:15'),
+(65, 'TANGOREC00008', 2, 'Fully Paid', 650.00, 0.00, 650.00, 1000.00, 350.00, 0.00, 'Cash', 'Dine-In', 'Pending', NULL, 11, '2025-07-07 17:41:38', '2025-07-07 14:11:38'),
+(66, 'TANGOREC00009', 5, 'Unpaid', 650.00, 0.00, 650.00, 0.00, 0.00, 650.00, 'N/A', 'Dine-In', 'Pending', NULL, 12, '2025-07-07 17:44:19', NULL),
+(67, 'TANGOREC00010', 2, 'Unpaid', 400.00, 0.00, 400.00, 0.00, 0.00, 400.00, 'N/A', 'Dine-In', 'Pending', NULL, 13, '2025-07-07 17:45:05', NULL),
+(68, 'TANGOREC00011', 5, 'Unpaid', 400.00, 0.00, 400.00, 0.00, 0.00, 400.00, 'N/A', 'Dine-In', 'Pending', NULL, 15, '2025-07-07 17:45:39', NULL),
+(69, 'TANGOREC00012', 2, 'Unpaid', 150.00, 0.00, 150.00, 0.00, 0.00, 150.00, 'N/A', 'Delivery', 'Pending', NULL, NULL, '2025-07-07 17:48:25', NULL),
+(70, 'TANGOREC00013', 2, 'Fully Paid', 300.00, 0.00, 300.00, 300.00, 0.00, 0.00, 'Cash', 'Take-Away', 'Pending', NULL, NULL, '2025-07-07 18:46:41', '2025-07-07 15:16:41');
 
 -- --------------------------------------------------------
 
@@ -292,7 +306,22 @@ INSERT INTO `order_item` (`Id`, `receipt_no`, `item_code`, `item_name`, `item_pr
 (90, 'TANGOREC00001', 'BUN-B01', 'Breakfast Bun ', 150.00, 2, 300.00),
 (91, 'TANGOREC00001', 'BUN-L01', 'Lunch Bun', 250.00, 2, 500.00),
 (92, 'TANGOREC00002', 'BUN-B01', 'Breakfast Bun ', 150.00, 4, 600.00),
-(93, 'TANGOREC00002', 'BUN-L01', 'Lunch Bun', 250.00, 2, 500.00);
+(93, 'TANGOREC00002', 'BUN-L01', 'Lunch Bun', 250.00, 2, 500.00),
+(94, 'TANGOREC00003', 'BUN-B01', 'Breakfast Bun ', 150.00, 4, 600.00),
+(95, 'TANGOREC00004', 'BUN-L01', 'Lunch Bun', 250.00, 1, 250.00),
+(96, 'TANGOREC00005', 'BUN-L01', 'Lunch Bun', 250.00, 1, 250.00),
+(97, 'TANGOREC00006', 'BUN-L01', 'Lunch Bun', 250.00, 1, 250.00),
+(98, 'TANGOREC00007', 'BUN-L01', 'Lunch Bun', 250.00, 1, 250.00),
+(99, 'TANGOREC00008', 'BUN-B01', 'Breakfast Bun ', 150.00, 1, 150.00),
+(100, 'TANGOREC00008', 'BUN-L01', 'Lunch Bun', 250.00, 2, 500.00),
+(101, 'TANGOREC00009', 'BUN-B01', 'Breakfast Bun ', 150.00, 1, 150.00),
+(102, 'TANGOREC00009', 'BUN-L01', 'Lunch Bun', 250.00, 2, 500.00),
+(103, 'TANGOREC00010', 'BUN-B01', 'Breakfast Bun ', 150.00, 1, 150.00),
+(104, 'TANGOREC00010', 'BUN-L01', 'Lunch Bun', 250.00, 1, 250.00),
+(105, 'TANGOREC00011', 'BUN-B01', 'Breakfast Bun ', 150.00, 1, 150.00),
+(106, 'TANGOREC00011', 'BUN-L01', 'Lunch Bun', 250.00, 1, 250.00),
+(107, 'TANGOREC00012', 'BUN-B01', 'Breakfast Bun ', 150.00, 1, 150.00),
+(108, 'TANGOREC00013', 'BUN-B01', 'Breakfast Bun ', 150.00, 2, 300.00);
 
 -- --------------------------------------------------------
 
@@ -317,7 +346,10 @@ CREATE TABLE `payments` (
 --
 
 INSERT INTO `payments` (`Id`, `receipt_no`, `payment_id`, `total_amount`, `paid_amount`, `balance`, `due_amount`, `payment_method`, `payment_date`) VALUES
-(52, 'TANGOREC00001', 1, 800.00, 800.00, 0.00, 0.00, 'Cash', '2025-07-06 19:58:49');
+(52, 'TANGOREC00001', 1, 800.00, 800.00, 0.00, 0.00, 'Cash', '2025-07-06 19:58:49'),
+(53, 'TANGOREC00007', 1, 250.00, 300.00, 50.00, 0.00, 'Cash', '2025-07-07 17:40:15'),
+(54, 'TANGOREC00008', 1, 650.00, 1000.00, 350.00, 0.00, 'Cash', '2025-07-07 17:41:38'),
+(55, 'TANGOREC00013', 1, 300.00, 300.00, 0.00, 0.00, 'Cash', '2025-07-07 18:46:41');
 
 -- --------------------------------------------------------
 
@@ -411,6 +443,9 @@ INSERT INTO `role_function` (`role_id`, `function_id`) VALUES
 (1, 105),
 (1, 106),
 (1, 107),
+(1, 108),
+(1, 109),
+(1, 110),
 (2, 1),
 (2, 2),
 (2, 3),
@@ -514,13 +549,13 @@ CREATE TABLE `table` (
 INSERT INTO `table` (`table_id`, `table_name`, `seat_count`, `table_status`, `room_id`) VALUES
 (7, 'RM1T1', 4, 'Seated', 1),
 (8, 'RM1T2', 4, 'Seated', 1),
-(9, 'RM1T3', 4, 'Vacant', 1),
-(10, 'RM1T4', 1, 'Vacant', 3),
-(11, 'RM1T5', 4, 'Vacant', 1),
-(12, 'RM1T6', 4, 'Vacant', 1),
-(13, 'RM1T7', 2, 'Vacant', 3),
+(9, 'RM1T3', 4, 'Seated', 1),
+(10, 'RM1T4', 1, 'Seated', 3),
+(11, 'RM1T5', 4, 'Seated', 1),
+(12, 'RM1T6', 4, 'Seated', 1),
+(13, 'RM1T7', 2, 'Seated', 3),
 (14, 'Testqq', 2, 'Vacant', 15),
-(15, 'BTBL1', 4, 'Vacant', 17),
+(15, 'BTBL1', 4, 'Seated', 17),
 (16, 'BTBL2', 2, 'Vacant', 17),
 (17, '1 Chair Table', 1, 'Vacant', 2);
 
@@ -540,7 +575,7 @@ CREATE TABLE `temp_invoice` (
 --
 
 INSERT INTO `temp_invoice` (`id`, `value`) VALUES
-(1, 3);
+(1, 14);
 
 -- --------------------------------------------------------
 
@@ -708,7 +743,7 @@ ALTER TABLE `customer`
 -- AUTO_INCREMENT for table `function`
 --
 ALTER TABLE `function`
-  MODIFY `function_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=108;
+  MODIFY `function_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=111;
 
 --
 -- AUTO_INCREMENT for table `item`
@@ -732,19 +767,19 @@ ALTER TABLE `module`
 -- AUTO_INCREMENT for table `orders`
 --
 ALTER TABLE `orders`
-  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=60;
+  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=71;
 
 --
 -- AUTO_INCREMENT for table `order_item`
 --
 ALTER TABLE `order_item`
-  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=94;
+  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=109;
 
 --
 -- AUTO_INCREMENT for table `payments`
 --
 ALTER TABLE `payments`
-  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
+  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=56;
 
 --
 -- AUTO_INCREMENT for table `role`

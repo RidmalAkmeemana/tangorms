@@ -41,6 +41,12 @@ $accessibleUrls = array_column($accessibleFunctions, 'function_url');
             </a>
         <?php } ?>
 
+        <?php if (in_array('view-orders.php', $accessibleUrls)) { ?>
+            <a href="view-orders.php" class="list-group-item">
+                <span class="glyphicon glyphicon-search"></span> &nbsp; View Orders
+            </a>
+        <?php } ?>
+
         <?php if (in_array('customer-report.php', $accessibleUrls)) { ?>
             <a href="customer-report.php" class="list-group-item">
                 <span class="glyphicon glyphicon-book"></span> &nbsp; Generate Customer Report

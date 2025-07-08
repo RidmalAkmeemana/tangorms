@@ -71,6 +71,14 @@ switch ($status) {
             // Update invoice number
             $posObj->updateInvoiceNo();
 
+            // Open receipt PDF in new tab
+            echo "<script>
+            const win = window.open('../view/print-receipt.php?receipt_no=$receipt_no', '_blank');
+            if (!win) {
+                alert('Please allow popups for this site to print the receipt.');
+            }
+            </script>";
+
             $msg = base64_encode("Order submitted successfully.");
             echo "<script>window.location = '../view/pos-sale.php?msg=$msg';</script>";
             exit();

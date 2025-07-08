@@ -77,7 +77,7 @@ $inactiveCustomerCount = $inactiveCustomers['inactive_customer_count'];
 
             <div class="col-md-6">
                 <div class="panel panel-info" style="height:180px">
-                    <div class="panel-heading">No of Active Customers</div>
+                    <div class="panel-heading">No of Inactive Customers</div>
                     <div class="panel-body">
                         <h1 class="h1"><?= $inactiveCustomerCount; ?></h1>
                     </div>

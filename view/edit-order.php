@@ -1,9 +1,7 @@
 <?php
 include '../commons/session.php';
 include_once '../commons/helpers/permission_helper.php';
-include_once '../model/pos_model.php';
-include_once '../model/customer_model.php';
-include_once '../model/menu_model.php';
+include_once '../model/order_model.php';
 
 
 checkFunctionPermission($_SERVER['PHP_SELF']);
@@ -11,17 +9,12 @@ checkFunctionPermission($_SERVER['PHP_SELF']);
 $userrow = $_SESSION["user"];
 $user_id = $userrow["user_id"];
 
+$receipt_no = $_GET["receipt_no"];
+
 // Get user invoice no
-$posObj = new POS();
-$posResult = $posObj->getInvoiceNo();
-$tableResult = $posObj->getTables();
-
-// Get user customers for dropdown
-$customerObj = new Customer();
-$customerResult = $customerObj->getAllCustomers();
-
-$menuObj = new Menu();
-$categoryResult = $menuObj->getAllCategory();
+$orderObj = new Order();
+$orderResult = $orderObj->getOrderByReceiptNo($receipt_no);
+$orderItems = $orderObj->getItemsByReceiptNo($receipt_no);
 
 ?>
 <!DOCTYPE html>
@@ -161,18 +154,11 @@ $categoryResult = $menuObj->getAllCategory();
 
                 <!-- Receipt No and Customer -->
                 <div class="row mt-3">
-                    <div class="col-md-2"><label class="control-label">Receipt No:</label><label class="text-danger">*</label></div>
-                    <div class="col-md-4"><input type="text" class="form-control" name="receipt_no" value="<?= $posResult; ?>" readonly></div>
+                    <div class="col-md-2"><label class="control-label">Receipt No:</label></div>
+                    <div class="col-md-4"><input type="text" class="form-control" name="receipt_no" value="<?= $orderResult["receipt_no"]; ?>" readonly></div>
 
-                    <div class="col-md-2"><label class="control-label">Customer Name:</label><label class="text-danger">*</label></div>
-                    <div class="col-md-4">
-                        <select name="customer_id" id="customer_id" class="form-control" required>
-                            <option value="">-- Select Customer --</option>
-                            <?php while ($customerRow = $customerResult->fetch_assoc()): ?>
-                                <option value="<?= $customerRow['customer_id']; ?>"><?= $customerRow['customer_name']; ?></option>
-                            <?php endwhile; ?>
-                        </select>
-                    </div>
+                    <div class="col-md-2"><label class="control-label">Customer Name:</label></div>
+                    <div class="col-md-4"><input type="text" class="form-control" name="customer_name" value="<?= $orderResult["customer_name"]; ?>" readonly></div>
                 </div>
 
                 <br>
@@ -185,18 +171,28 @@ $categoryResult = $menuObj->getAllCategory();
                                 <thead>
                                     <tr>
                                         <th class="text-start">Item Code</th>
-                                        <th class="text-start">Item Image</th>
                                         <th class="text-start">Item Name</th>
                                         <th class="text-center">Unit Price</th>
                                         <th class="text-center">Qty</th>
                                         <th class="text-center">Total Price</th>
-                                        <th class="text-center">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr class="no-items-row">
-                                        <td colspan="7" class="text-center">No items in the cart.</td>
-                                    </tr>
+                                    <?php if (!empty($orderItems) && $orderItems->num_rows > 0): ?>
+                                        <?php while ($item = $orderItems->fetch_assoc()): ?>
+                                            <tr>
+                                                <td class="text-start"><?= htmlspecialchars($item["item_code"]); ?></td>
+                                                <td class="text-start"><?= htmlspecialchars($item["item_name"]); ?></td>
+                                                <td class="text-center"><?= number_format((float)$item["item_price"], 2, '.', ''); ?></td>
+                                                <td class="text-center"><?= (int)$item["item_qty"]; ?></td>
+                                                <td class="text-center"><?= number_format((float)$item["total_price"], 2, '.', ''); ?></td>
+                                            </tr>
+                                        <?php endwhile; ?>
+                                    <?php else: ?>
+                                        <tr>
+                                            <td colspan="6" class="text-center">No items found for this receipt.</td>
+                                        </tr>
+                                    <?php endif; ?>
                                 </tbody>
                             </table>
                         </div>
@@ -207,68 +203,56 @@ $categoryResult = $menuObj->getAllCategory();
                 <!-- Discount and Payment -->
                 <div class="row mt-3">
                     <div class="col-md-3">
-                        <label>Sub Total</label><label class="text-danger">*</label>
-                        <input readonly type="number" step="any" name="sub_total_amount" id="sub_total_amount" class="form-control" value="0">
+                        <label>Sub Total</label>
+                        <input readonly type="number" step="any" name="sub_total_amount" id="sub_total_amount" class="form-control" value="<?= number_format((float)$orderResult["sub_total_amount"], 2, '.', ''); ?>" readonly>
                     </div>
 
                     <div class="col-md-3">
-                        <label>Discount (%)</label><label class="text-danger">*</label>
-                        <input type="number" name="discount" id="discount" class="form-control" min="0" max="90" value="0">
+                        <label>Discount (%)</label>
+                        <input type="number" name="discount" id="discount" class="form-control" min="0" max="90" value="<?= number_format((float)$orderResult["discount"], 2, '.', ''); ?>" readonly>
                     </div>
 
                     <div class="col-md-3">
-                        <label>Grand Total</label><label class="text-danger">*</label>
-                        <input readonly type="number" step="any" name="total_amount" id="total_amount" class="form-control" value="0">
+                        <label>Grand Total</label>
+                        <input readonly type="number" step="any" name="total_amount" id="total_amount" class="form-control" value="<?= number_format((float)$orderResult["total_amount"], 2, '.', ''); ?>" readonly>
                     </div>
 
                     <div class="col-md-3">
-                        <label>Payment Method</label><label class="text-danger">*</label>
-                        <select name="payment_method" class="form-control" required>
-                            <option value="">-- Select Payment Method --</option>
-                            <option value="Cash">Cash</option>
-                            <option value="Card">Card</option>
-                            <option value="Bank Transfer">Bank Transfer</option>
-                            <option value="N/A">N/A</option>
-                        </select>
+                        <label>Payment Method</label>
+                        <input readonly type="text" name="payment_method" id="payment_method" class="form-control" value="<?= $orderResult["payment_method"]; ?>" readonly>
                     </div>
                 </div>
 
                 <div class="row mt-3">
 
                     <div class="col-md-3">
-                        <label>Paid Amount</label><label class="text-danger">*</label>
-                        <input type="number" step="any" name="paid_amount" id="paid_amount" class="form-control" value="0" required>
+                        <label>Paid Amount</label>
+                        <input type="number" step="any" name="paid_amount" id="paid_amount" class="form-control" value="<?= number_format((float)$orderResult["paid_amount"], 2, '.', ''); ?>" readonly>
                     </div>
 
                     <div class="col-md-3">
-                        <label>Due Amount</label><label class="text-danger">*</label>
-                        <input readonly type="number" step="any" name="due_amount" id="due_amount" class="form-control" value="0">
+                        <label>Due Amount</label>
+                        <input readonly type="number" step="any" name="due_amount" id="due_amount" class="form-control" value="<?= number_format((float)$orderResult["due_amount"], 2, '.', ''); ?>" readonly>
                     </div>
 
                     <div class="col-md-3">
-                        <label>Balance</label><label class="text-danger">*</label>
-                        <input readonly type="number" step="any" name="balance" id="balance" class="form-control" value="0">
+                        <label>Balance</label>
+                        <input readonly type="number" step="any" name="balance" id="balance" class="form-control" value="<?= number_format((float)$orderResult["balance"], 2, '.', ''); ?>" readonly>
                     </div>
 
                     <div class="col-md-3">
-                        <label>Order Type</label><label class="text-danger">*</label>
-                        <select name="order_type" id="order_type" class="form-control" required>
-                            <option value="">-- Select Order Type --</option>
-                            <option value="Dine-In">Dine-In</option>
-                            <option value="Take-Away">Take-Away</option>
-                            <option value="Delivery">Delivery</option>
-                        </select>
+                        <label>Order Type</label>
+                        <input readonly type="text" name="balance" id="balance" class="form-control" value="<?= $orderResult["order_type"]; ?>" readonly>
                     </div>
                 </div>
 
                 <div class="row mt-3">
                     <div class="col-md-12">
-                        <label>Order Status</label><label class="text-danger">*</label>
-                        <select name="order_type" id="order_type" class="form-control" required>
-                            <option value="">-- Select Order Type --</option>
-                            <option value="Dine-In">Dine-In</option>
-                            <option value="Take-Away">Take-Away</option>
-                            <option value="Delivery">Delivery</option>
+                        <label>Change Order Status</label><label class="text-danger">*</label>
+                        <select name="order_status" id="order_status" class="form-control" required>
+                            <option value="">-- Select Order Status --</option>
+                            <option value="Rejected">Rejected</option>
+                            <option value="Canceled">Canceled</option>
                         </select>
                     </div>
                 </div>

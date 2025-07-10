@@ -26,6 +26,7 @@ switch ($status) {
             $due_amount = $_POST['due_amount'];
             $payment_method = $_POST['payment_method'];
             $order_type = $_POST['order_type'];
+            $order_priority = $_POST['order_priority'];
             $table_id = isset($_POST['table_id']) ? $_POST['table_id'] : null;
 
             $item_codes = $_POST['item_code'];
@@ -48,7 +49,7 @@ switch ($status) {
             }
 
             // Save Order
-            $posObj->saveOrder($receipt_no, $customer_id, $payment_status, $sub_total_amount, $discount, $total_amount, $paid_amount, $balance, $due_amount, $payment_method, $order_type, $table_id);
+            $posObj->saveOrder($receipt_no, $customer_id, $payment_status, $sub_total_amount, $discount, $total_amount, $paid_amount, $balance, $due_amount, $payment_method, $order_type, $table_id, $order_priority);
 
             // Save Order Items and update item stock
             for ($i = 0; $i < count($item_codes); $i++) {
@@ -90,6 +91,53 @@ switch ($status) {
         }
 
         break;
+
+        case "update_order":
+
+            try {
+                $receipt_no = $_POST['receipt_no'];
+                $order_status = $_POST['order_status'];
+                $reason = $_POST['reason'] ?? null;
+                $payment_status = $_POST['payment_status'];
+        
+                if (empty($receipt_no) || empty($order_status) || empty($payment_status)) {
+                    throw new Exception("Missing required fields.");
+                }
+        
+                // If the status is 'Rejected' or 'Canceled' and payment is not 'Unpaid', show alert
+                if (
+                    ($order_status === "Rejected" || $order_status === "Canceled") &&
+                    $payment_status !== "Unpaid"
+                ) {
+                    echo "<script>
+                        alert('Please reverse the payment before canceling or rejecting the order.');
+                        window.location = '../view/view-orders.php';
+                    </script>";
+                    exit();
+                }
+        
+                // Determine if reason needs to be updated
+                if ($order_status === "Rejected" || $order_status === "Canceled") {
+                    if (empty($reason)) {
+                        throw new Exception("Reason is required for Rejected or Canceled status.");
+                    }
+                    $posObj->updateOrderStatus($receipt_no, $order_status, $reason);
+                } else {
+                    $posObj->updateOrderStatus($receipt_no, $order_status, null); // Pass null if no reason needed
+                }
+        
+                $msg = base64_encode("Order status updated successfully.");
+                echo "<script>window.location = '../view/view-orders.php?msg=$msg';</script>";
+                exit();
+        
+            } catch (Exception $ex) {
+                $msg = base64_encode("Error: " . $ex->getMessage());
+                echo "<script>window.location = '../view/view-orders.php?msg=$msg';</script>";
+                exit();
+            }
+        
+            break;
+    
 
     default:
         echo "<script>window.location = '../view/login.php';</script>";

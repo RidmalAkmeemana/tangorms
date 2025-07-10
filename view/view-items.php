@@ -206,6 +206,7 @@ $itemResult = $menuObj->getAllItems();
                                     <th class="text-start" scope="col">Item Name</th>
                                     <th class="text-start" scope="col">Item Price</th>
                                     <th class="text-center" scope="col">Item Category</th>
+                                    <th class="text-center" scope="col">Qty</th>
                                     <th class="text-center" scope="col">Item Status</th>
                                     <th class="text-center" scope="col">Is Enable</th>
                                     <th class="text-center" scope="col">Actions</th>
@@ -230,6 +231,7 @@ $itemResult = $menuObj->getAllItems();
                                         <td class="text-start pe-3"><?= htmlspecialchars($itemRow["item_name"]) ?></td>
                                         <td class="text-start pe-3"><?= htmlspecialchars($itemRow["item_price"]) ?></td>
                                         <td class="text-start pe-3"><?= htmlspecialchars($itemRow["category_name"]) ?></td>
+                                        <td class="text-start pe-3"><?= htmlspecialchars($itemRow["item_qty"]) ?></td>
                                         <td>
                                             <span class="<?= $status_class ?> px-3 py-1"><?= $status ?></span>
                                         </td>

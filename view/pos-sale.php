@@ -263,6 +263,16 @@ $categoryResult = $menuObj->getAllCategory();
                 <div class="row mt-3">
 
                     <div class="col-md-3">
+                        <label>Order Priority</label><label class="text-danger">*</label>
+                        <select name="order_priority" id="order_priority" class="form-control" required>
+                            <option value="">-- Select Order Priority --</option>
+                            <option value="Low">Low</option>
+                            <option value="Moderate">Moderate</option>
+                            <option value="High">High</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-3">
                         <label>Paid Amount</label><label class="text-danger">*</label>
                         <input type="number" step="any" name="paid_amount" id="paid_amount" class="form-control" value="0" required>
                     </div>
@@ -276,6 +286,9 @@ $categoryResult = $menuObj->getAllCategory();
                         <label>Balance</label><label class="text-danger">*</label>
                         <input readonly type="number" step="any" name="balance" id="balance" class="form-control" value="0">
                     </div>
+                </div>
+
+                <div class="row mt-3">
 
                     <div class="col-md-3">
                         <label>Order Type</label><label class="text-danger">*</label>
@@ -286,9 +299,7 @@ $categoryResult = $menuObj->getAllCategory();
                             <option value="Delivery">Delivery</option>
                         </select>
                     </div>
-                </div>
 
-                <div class="row mt-3">
                     <div class="col-md-3" id="table_select_wrapper" style="display: none;">
                         <label>Select Table</label><label class="text-danger">*</label>
                         <select name="table_id" id="table_id" class="form-control" disabled>

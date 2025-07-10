@@ -32,11 +32,10 @@ $fpdf->Cell(0, 10, "The system inventory as of $date is listed below:", 0, 1, "L
 // Set column headers
 $fpdf->SetFont("Arial", "B", 11);
 $fpdf->Cell(25, 10, "Item Code", 1, 0, "C");
-$fpdf->Cell(35, 10, "Item Name", 1, 0, "C");
-$fpdf->Cell(40, 10, "Item Description", 1, 0, "C");
+$fpdf->Cell(55, 10, "Item Name", 1, 0, "C");
 $fpdf->Cell(25, 10, "Item Price", 1, 0, "C");
 $fpdf->Cell(15, 10, "Qty", 1, 0, "C");
-$fpdf->Cell(30, 10, "Category Name", 1, 0, "C");
+$fpdf->Cell(50, 10, "Category Name", 1, 0, "C");
 $fpdf->Cell(20, 10, "Status", 1, 1, "C");
 
 // Table Data
@@ -50,11 +49,10 @@ while ($row = $inventoryResult->fetch_assoc()) {
     $totalInventoryValue += $itemTotalValue;
 
     $fpdf->Cell(25, 10, $row['item_code'], 1, 0, "C");
-    $fpdf->Cell(35, 10, $row['item_name'], 1, 0, "C");
-    $fpdf->Cell(40, 10, $row['item_description'], 1, 0, "C");
+    $fpdf->Cell(55, 10, $row['item_name'], 1, 0, "C");
     $fpdf->Cell(25, 10, number_format($row['item_price'], 2), 1, 0, "C");
     $fpdf->Cell(15, 10, $row['item_qty'], 1, 0, "C");
-    $fpdf->Cell(30, 10, $row['category_name'], 1, 0, "C");
+    $fpdf->Cell(50, 10, $row['category_name'], 1, 0, "C");
     $fpdf->Cell(20, 10, $status, 1, 1, "C");
 }
 

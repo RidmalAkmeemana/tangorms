@@ -169,9 +169,9 @@ $orderResult = $orderObj->getAllOrders();
 
 <body>
     <div class="container">
-        <?php $pageName = "POS MANAGEMENT"; ?>
+        <?php $pageName = "KITCHEN MANAGEMENT"; ?>
         <?php include_once "../includes/header_row_includes.php"; ?>
-        <?php require 'pos-management-sidebar.php'; ?>
+        <?php require 'kitchen-management-sidebar.php'; ?>
 
         <div class="col-md-9">
             <?php if (isset($_GET["msg"])): ?>
@@ -281,10 +281,7 @@ $orderResult = $orderObj->getAllOrders();
                                         <td class="text-start"><?= !empty($orderRow["payment_date"]) ? $orderRow["payment_date"] : "N/A" ?></td>
                                         <td>
                                             <div class="d-flex flex-wrap gap-2 justify-content-center">
-                                                <a href="duplicate-receipt.php?receipt_no=<?= $orderRow["receipt_no"] ?>" class="btn btn-sm btn-info">
-                                                    <i class="fa fa-file" aria-hidden="true"></i>
-                                                </a>
-                                                <a href="edit-order.php?receipt_no=<?= $orderRow["receipt_no"] ?>" class="btn btn-sm btn-warning">
+                                                <a href="edit-kitchen-order.php?receipt_no=<?= $orderRow["receipt_no"] ?>" class="btn btn-sm btn-warning">
                                                     <i class="fa fa-pencil" aria-hidden="true"></i>
                                                 </a>
                                             </div>

@@ -22,7 +22,7 @@ $orderItems = $orderObj->getItemsByReceiptNo($receipt_no);
 
 <head>
     <meta charset="UTF-8">
-    <title>POS Sale</title>
+    <title>Order Summery</title>
     <?php include_once "../includes/bootstrap_css_includes.php"; ?>
     <link rel="stylesheet" type="text/css" href="../css/dataTables.bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -137,13 +137,13 @@ $orderItems = $orderObj->getItemsByReceiptNo($receipt_no);
 
 <body>
     <div class="container">
-        <?php $pageName = "POS MANAGEMENT";
+        <?php $pageName = "DELIVERY MANAGEMENT";
         include_once "../includes/header_row_includes.php"; ?>
 
         <div class="row">
-            <?php require 'pos-management-sidebar.php'; ?>
+            <?php require 'delivery-management-sidebar.php'; ?>
 
-            <form class="col-md-9" action="../controller/pos_controller.php?status=update_order" method="post">
+            <form class="col-md-9" action="../controller/delivery_controller.php?status=update_order" method="post">
                 <?php if (isset($_GET['msg'])): ?>
                     <div class="row">
                         <div class="col-md-8 col-md-offset-2 alert alert-success text-center">
@@ -247,22 +247,27 @@ $orderItems = $orderObj->getItemsByReceiptNo($receipt_no);
                 </div>
 
                 <div class="row mt-3">
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label>Table Name</label>
-                        <input readonly type="text" name="table_id" id="table_id" class="form-control" value="<?= $orderResult["table_name"] ?? "N/A"; ?>" readonly>
+                        <input readonly type="text" name="table_id" id="table_id" class="form-control" value="<?= $orderResult["table_name"] ?? "N/A" ?>" readonly>
                     </div>
 
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label>Payment Status</label>
                         <input readonly type="text" name="payment_status" id="payment_status" class="form-control" value="<?= $orderResult["payment_status"]; ?>" readonly>
                     </div>
 
-                    <div class="col-md-4">
-                        <label>Change Order Status</label><label class="text-danger">*</label>
+                    <div class="col-md-3">
+                        <label>Order Priority</label>
+                        <input readonly type="text" name="order_priority" id="order_priority" class="form-control" value="<?= $orderResult["order_priority"]; ?>" readonly>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label>Order Status</label><label class="text-danger">*</label>
                         <select name="order_status" id="order_status" class="form-control" required>
                             <option value="">-- Select Order Status --</option>
                             <?php
-                            $statuses = ["Pending", "Preparing", "Ready", "Served", "Delivering", "Completed", "Rejected", "Canceled"];
+                            $statuses = ["Ready", "Delivering", "Completed", "Rejected"];
                             foreach ($statuses as $status):
                             ?>
                                 <option value="<?= $status ?>" <?= ($orderResult["order_status"] === $status) ? "selected" : "" ?>>

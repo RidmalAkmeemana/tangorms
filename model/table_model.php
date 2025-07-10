@@ -78,8 +78,7 @@ class Table
 
     $sql = "SELECT t.*, r.room_name 
             FROM `table` t
-            INNER JOIN `room` r ON t.room_id = r.room_id
-            WHERE t.table_status != 'Out of Service'";
+            INNER JOIN `room` r ON t.room_id = r.room_id";
 
     $result = $con->query($sql) or die($con->error);
     return $result;

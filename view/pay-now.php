@@ -2,7 +2,7 @@
 include '../commons/session.php';
 include_once '../commons/helpers/permission_helper.php';
 include_once '../model/order_model.php';
-
+include_once '../model/purchasing_model.php';
 
 checkFunctionPermission($_SERVER['PHP_SELF']);
 
@@ -16,13 +16,16 @@ $orderObj = new Order();
 $orderResult = $orderObj->getOrderByReceiptNo($receipt_no);
 $orderItems = $orderObj->getItemsByReceiptNo($receipt_no);
 
+$purchasingObj = new Purchasing();
+$orderPayments = $purchasingObj->getPaymentsByReceiptNo($receipt_no);
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
-    <title>POS Sale</title>
+    <title>Order Summery</title>
     <?php include_once "../includes/bootstrap_css_includes.php"; ?>
     <link rel="stylesheet" type="text/css" href="../css/dataTables.bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -137,13 +140,13 @@ $orderItems = $orderObj->getItemsByReceiptNo($receipt_no);
 
 <body>
     <div class="container">
-        <?php $pageName = "POS MANAGEMENT";
+        <?php $pageName = "PURCHASING MANAGEMENT";
         include_once "../includes/header_row_includes.php"; ?>
 
         <div class="row">
-            <?php require 'pos-management-sidebar.php'; ?>
+            <?php require 'purchasing-management-sidebar.php'; ?>
 
-            <form class="col-md-9" action="../controller/pos_controller.php?status=update_order" method="post">
+            <form class="col-md-9" action="../controller/purchasing_controller.php?status=update_order" method="post">
                 <?php if (isset($_GET['msg'])): ?>
                     <div class="row">
                         <div class="col-md-8 col-md-offset-2 alert alert-success text-center">
@@ -247,43 +250,96 @@ $orderItems = $orderObj->getItemsByReceiptNo($receipt_no);
                 </div>
 
                 <div class="row mt-3">
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label>Table Name</label>
-                        <input readonly type="text" name="table_id" id="table_id" class="form-control" value="<?= $orderResult["table_name"] ?? "N/A"; ?>" readonly>
+                        <input readonly type="text" name="table_id" id="table_id" class="form-control" value="<?= $orderResult["table_name"] ?? "N/A" ?>" readonly>
                     </div>
 
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label>Payment Status</label>
                         <input readonly type="text" name="payment_status" id="payment_status" class="form-control" value="<?= $orderResult["payment_status"]; ?>" readonly>
                     </div>
 
-                    <div class="col-md-4">
-                        <label>Change Order Status</label><label class="text-danger">*</label>
-                        <select name="order_status" id="order_status" class="form-control" required>
-                            <option value="">-- Select Order Status --</option>
-                            <?php
-                            $statuses = ["Pending", "Preparing", "Ready", "Served", "Delivering", "Completed", "Rejected", "Canceled"];
-                            foreach ($statuses as $status):
-                            ?>
-                                <option value="<?= $status ?>" <?= ($orderResult["order_status"] === $status) ? "selected" : "" ?>>
-                                    <?= htmlspecialchars($status) ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
+                    <div class="col-md-3">
+                        <label>Order Priority</label>
+                        <input readonly type="text" name="order_priority" id="order_priority" class="form-control" value="<?= $orderResult["order_priority"]; ?>" readonly>
+                    </div>
+
+                    <div class="col-md-3">
+                        <label>Order Status</label>
+                        <input readonly type="text" name="order_status" id="order_status" class="form-control" value="<?= $orderResult["order_status"]; ?>" readonly>
+                    </div>
+
+                </div>
+
+                <br>
+
+                <!-- Payment History Table -->
+                <div class="row mt-4">
+                    <div class="col-md-12">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover align-middle text-center table-striped" id="cart_table">
+                                <thead>
+                                    <tr>
+                                        <th class="text-start">Payment Receipt</th>
+                                        <th class="text-end">Total Price</th>
+                                        <th class="text-end">Paid Amount</th>
+                                        <th class="text-center">Payment Method</th>
+                                        <th class="text-end">Balance</th>
+                                        <th class="text-end">Due Amount</th>
+                                        <th class="text-start">Payemet Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php if (!empty($orderPayments) && $orderPayments->num_rows > 0): ?>
+                                        <?php while ($payment = $orderPayments->fetch_assoc()): ?>
+                                            <tr>
+                                                <td class="text-start"><?= $payment["receipt_no"]."/".$payment["payment_id"]; ?></td>
+                                                <td class="text-center"><?= number_format((float)$payment["total_amount"], 2, '.', ''); ?></td>
+                                                <td class="text-center"><?= number_format((float)$payment["paid_amount"], 2, '.', ''); ?></td>
+                                                <td class="text-start"><?= $payment["payment_method"]; ?></td>
+                                                <td class="text-center"><?= number_format((float)$payment["balance"], 2, '.', ''); ?></td>
+                                                <td class="text-center"><?= number_format((float)$payment["due_amount"], 2, '.', ''); ?></td>
+                                                <td class="text-start"><?= $payment["payment_date"]; ?></td>
+                                            </tr>
+                                        <?php endwhile; ?>
+                                    <?php else: ?>
+                                        <tr>
+                                            <td colspan="6" class="text-center">No items found for this receipt.</td>
+                                        </tr>
+                                    <?php endif; ?>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
 
                 <div class="row mt-3">
-                    <div class="col-md-12">
-                        <label>Reason</label><label class="text-danger">*</label>
-                        <textarea type="text" class="form-control" name="reason" id="reason" required></textarea>
+                    <div class="col-md-6">
+                        <label>Amount Pay</label><label class="text-danger">*</label>
+                        <input type="number" step="any" name="new_paid_amount" id="new_paid_amount" class="form-control" value="0" required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label>Due Amount</label><label class="text-danger">*</label>
+                        <input type="number" step="any" name="new_due_amount" id="new_due_amount" class="form-control" value="<?= number_format((float)$orderResult["due_amount"], 2, '.', ''); ?>" required>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label>Payment Method</label><label class="text-danger">*</label>
+                        <select name="new_payment_method" id="new_payment_method" class="form-control" required>
+                            <option value="">-- Select Payment Method --</option>
+                            <option value="Cash">Cash</option>
+                            <option value="Card">Card</option>
+                            <option value="Bank Transfer">Bank Transfer</option>
+                        </select>
                     </div>
                 </div>
 
                 <!-- Submit Buttons -->
                 <div class="row mt-3 text-center">
                     <div class="col-md-12">
-                        <input type="submit" class="btn btn-primary" value="Submit">
+                        <input type="submit" class="btn btn-primary" value="Pay Now">
                         <input type="reset" class="btn btn-danger" value="Reset">
                     </div>
                 </div>
@@ -295,21 +351,51 @@ $orderItems = $orderObj->getItemsByReceiptNo($receipt_no);
         <script src="../js/uservalidation.js"></script>
 
         <script>
-            $(document).ready(function() {
-                // Initially disable and hide the reason field
-                $("#reason").prop("disabled", true).closest('.row').hide();
+    document.addEventListener('DOMContentLoaded', function () {
+        const paidInput = document.getElementById('new_paid_amount');
+        const dueOutput = document.getElementById('new_due_amount');
+        const existingDue = parseFloat(document.getElementById('due_amount').value);
+        const paymentMethod = document.getElementById('new_payment_method');
+        const form = document.querySelector('form');
 
-                $("#order_status").on("change", function() {
-                    const selectedStatus = $(this).val();
+        // Update due amount in real-time
+        paidInput.addEventListener('input', function () {
+            let paidAmount = parseFloat(paidInput.value);
 
-                    if (selectedStatus === "Rejected" || selectedStatus === "Canceled") {
-                        $("#reason").prop("disabled", false).closest('.row').show();
-                    } else {
-                        $("#reason").prop("disabled", true).val("").closest('.row').hide();
-                    }
-                });
-            });
-        </script>
+            if (isNaN(paidAmount) || paidAmount < 0) {
+                dueOutput.value = existingDue.toFixed(2);
+                return;
+            }
+
+            let newDue = existingDue - paidAmount;
+            if (newDue < 0) newDue = 0;
+            dueOutput.value = newDue.toFixed(2);
+        });
+
+        // Form validation on submit
+        form.addEventListener('submit', function (e) {
+            let paidAmount = parseFloat(paidInput.value);
+
+            if (!paymentMethod.value) {
+                alert("Please select a payment method.");
+                e.preventDefault();
+                return;
+            }
+
+            if (isNaN(paidAmount) || paidAmount <= 0) {
+                alert("Please enter a valid payment amount.");
+                e.preventDefault();
+                return;
+            }
+
+            if (paidAmount > existingDue) {
+                alert("Amount Going to Pay is greater than Due Amount.");
+                e.preventDefault();
+            }
+        });
+    });
+</script>
+
 </body>
 
 </html>

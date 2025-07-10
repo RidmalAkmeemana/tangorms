@@ -146,7 +146,7 @@ $userRow = $userResult->fetch_assoc();
                 <!-- NIC & Image -->
                 <div class="row mt-3">
                     <div class="col-md-2"><label class="control-label">NIC</label><label class="text-danger">*</label></div>
-                    <div class="col-md-4"><input type="text" class="form-control" name="nic" id="nic" value="<?= $userRow["user_nic"]; ?>" required /></div>
+                    <div class="col-md-4"><input type="text" class="form-control" name="nic" value="<?= $userRow["user_nic"]; ?>" required /></div>
                     <div class="col-md-2"><label class="control-label">Image</label></div>
                     <div class="col-md-4">
                         <input type="file" class="form-control" name="user_image" id="user_image" onchange="displayImage(this);" />

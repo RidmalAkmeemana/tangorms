@@ -42,45 +42,48 @@ class POS
     }
 
     // Save Order to `orders` table
-    public function saveOrder($receipt_no, $customer_id, $payment_status, $sub_total_amount, $discount, $total_amount, $paid_amount, $balance, $due_amount, $payment_method, $order_type, $table_id)
-{
-    $con = $GLOBALS["con"];
-    $order_status = "Pending";
+    public function saveOrder($receipt_no, $customer_id, $payment_status, $sub_total_amount, $discount, $total_amount, $paid_amount, $balance, $due_amount, $payment_method, $order_type, $table_id, $order_priority)
+    {
+        $con = $GLOBALS["con"];
+        $order_status = "Pending";
 
-    // Set payment_date to NULL if Unpaid
-    $payment_date = ($payment_status === 'Unpaid') ? null : date('Y-m-d H:i:s');
+        // Set payment_date to NULL if Unpaid
+        $payment_date = ($payment_status === 'Unpaid') ? null : date('Y-m-d H:i:s');
+        $last_update = date('Y-m-d H:i:s');
 
-    // Set table_id to NULL if order type is not Dine-In
-    if ($order_type !== 'Dine-In') {
-        $table_id = null;
-    }
+        // Set table_id to NULL if order type is not Dine-In
+        if ($order_type !== 'Dine-In') {
+            $table_id = null;
+        }
 
-    $stmt = $con->prepare("INSERT INTO orders (
+        $stmt = $con->prepare("INSERT INTO orders (
         receipt_no, customer_id, payment_status, sub_total_amount, discount, total_amount, paid_amount, balance,
-        due_amount, payment_method, order_type, order_status, table_id, payment_date
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        due_amount, payment_method, order_type, order_status, table_id, order_priority, payment_date, last_update
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-    // Bind all 14 values, allowing nulls for table_id and payment_date
-    $stmt->bind_param(
-        "sisddddddsssss",
-        $receipt_no,
-        $customer_id,
-        $payment_status,
-        $sub_total_amount,
-        $discount,
-        $total_amount,
-        $paid_amount,
-        $balance,
-        $due_amount,
-        $payment_method,
-        $order_type,
-        $order_status,
-        $table_id,
-        $payment_date
-    );
+        // Bind all 16 values, allowing nulls for table_id and payment_date
+        $stmt->bind_param(
+            "sisddddddsssisss",
+            $receipt_no,
+            $customer_id,
+            $payment_status,
+            $sub_total_amount,
+            $discount,
+            $total_amount,
+            $paid_amount,
+            $balance,
+            $due_amount,
+            $payment_method,
+            $order_type,
+            $order_status,
+            $table_id,
+            $order_priority,
+            $payment_date,
+            $last_update
+        );
 
-    return $stmt->execute();
-}
+        return $stmt->execute();
+    }
 
 
 
@@ -130,16 +133,16 @@ class POS
 
     // Get next payment ID
     public function getNextPaymentId($receipt_no)
-{
-    $con = $GLOBALS["con"];
-    $stmt = $con->prepare("SELECT MAX(payment_id) AS max_id FROM payments WHERE receipt_no = ?");
-    $stmt->bind_param("s", $receipt_no);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $row = $result->fetch_assoc();
+    {
+        $con = $GLOBALS["con"];
+        $stmt = $con->prepare("SELECT MAX(payment_id) AS max_id FROM payments WHERE receipt_no = ?");
+        $stmt->bind_param("s", $receipt_no);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
 
-    return ($row['max_id']) ? $row['max_id'] + 1 : 1;
-}
+        return ($row['max_id']) ? $row['max_id'] + 1 : 1;
+    }
 
     // Update Invoice Number
     public function updateInvoiceNo()
@@ -164,7 +167,7 @@ class POS
                     `table` t ON o.table_id = t.table_id
                 WHERE 
                     o.receipt_no = ?";
-        
+
         $stmt = $con->prepare($sql);
         $stmt->bind_param("s", $receipt_no);
         $stmt->execute();
@@ -172,13 +175,22 @@ class POS
         return $result->fetch_assoc();
     }
 
-// Get order items by receipt number
-public function getOrderItemsByReceiptNo($receipt_no)
-{
-    $con = $GLOBALS["con"];
-    $stmt = $con->prepare("SELECT * FROM order_item WHERE receipt_no = ?");
-    $stmt->bind_param("s", $receipt_no);
-    $stmt->execute();
-    return $stmt->get_result(); // Return result to loop over
-}
+    // Get order items by receipt number
+    public function getOrderItemsByReceiptNo($receipt_no)
+    {
+        $con = $GLOBALS["con"];
+        $stmt = $con->prepare("SELECT * FROM order_item WHERE receipt_no = ?");
+        $stmt->bind_param("s", $receipt_no);
+        $stmt->execute();
+        return $stmt->get_result(); // Return result to loop over
+    }
+
+    public function updateOrderStatus($receipt_no, $order_status, $reason)
+    {
+        $con = $GLOBALS["con"];
+        $sql = "UPDATE orders SET order_status = ?, reason = ? WHERE receipt_no = ?";
+        $stmt = $con->prepare($sql);
+        $stmt->bind_param("sss", $order_status, $reason, $receipt_no);
+        return $stmt->execute();
+    }
 }

@@ -76,6 +76,36 @@ class Purchasing
         return $stmt->get_result(); // Return result to loop over
     }
 
+    public function updateOrder($receipt_no, $new_payment_status, $new_paid_amount, $new_due_amount, $new_payment_method)
+    {
+        $con = $GLOBALS["con"];
+        $payment_date = date('Y-m-d H:i:s');
+
+        $sql = "UPDATE orders 
+            SET payment_status = ?, 
+                paid_amount = ?, 
+                due_amount = ?, 
+                payment_method = ?, 
+                payment_date = ?  
+            WHERE receipt_no = ?";
+
+        $stmt = $con->prepare($sql);
+
+        // Correct data types: s = string, d = double
+        $stmt->bind_param(
+            "ddssss",
+            $new_paid_amount,
+            $new_due_amount,
+            $new_payment_status,
+            $new_payment_method,
+            $payment_date,
+            $receipt_no
+        );
+
+        return $stmt->execute();
+    }
+
+
 
     // public function updateOrderStatus($receipt_no, $order_status, $reason = null)
     // {

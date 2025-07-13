@@ -86,7 +86,7 @@ $roomResult  = $roomObj->getAllRooms();
 
 <body>
 <div class="container">
-    <?php $pageName = "USER MANAGEMENT"; ?>
+    <?php $pageName = "TABLE MANAGEMENT"; ?>
     <?php include_once "../includes/header_row_includes.php"; ?>
     <?php require 'table-management-sidebar.php'; ?>
 

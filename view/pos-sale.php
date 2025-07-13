@@ -344,37 +344,49 @@ $categoryResult = $menuObj->getAllCategory();
             $(document).ready(function() {
 
                 $('#order_type').on('change', function() {
-                    const orderType = $(this).val();
+    const orderType = $(this).val();
 
-                    if (orderType === 'Dine-In') {
-                        $('#table_select_wrapper').show();
-                        $('#table_id').prop('disabled', false).attr('required', true);
+    if (orderType === 'Dine-In') {
+        $('#table_select_wrapper').show();
+        $('#table_id').prop('disabled', false).attr('required', true);
 
-                        $.ajax({
-                            url: '../ajax/get_table_by_order_type.php',
-                            method: 'GET',
-                            dataType: 'json',
-                            success: function(response) {
-                                $('#table_id').html('<option value="">-- Select Table --</option>');
-                                if (response.length > 0) {
-                                    response.forEach(function(table) {
-                                        $('#table_id').append('<option value="' + table.table_id + '">' + table.table_name + '</option>');
-                                    });
-                                } else {
-                                    $('#table_id').html('<option value="">No tables available</option>');
-                                }
-                            },
-                            error: function() {
-                                alert("Failed to load tables.");
-                            }
-                        });
+        const customerId = $('#customer_id').val();
+        if (!customerId) {
+            alert("Please select a customer first.");
+            $('#order_type').val('');
+            $('#table_select_wrapper').hide();
+            $('#table_id').val('').prop('disabled', true).removeAttr('required');
+            return;
+        }
 
-                    } else {
-                        $('#table_id').prop('disabled', true).removeAttr('required');
-                        $('#table_select_wrapper').hide();
-                        $('#table_id').val('');
-                    }
-                });
+        $.ajax({
+            url: '../ajax/get_table_by_order_type.php',
+            method: 'GET',
+            data: { customer_id: customerId },
+            dataType: 'json',
+            success: function(response) {
+                $('#table_id').html('<option value="">-- Select Table --</option>');
+                if (response.length > 0) {
+                    response.forEach(function(table) {
+                        $('#table_id').append('<option value="' + table.table_id + '">' + table.table_name + '</option>');
+                    });
+                } else {
+                    $('#table_id').html('<option value="">No tables available</option>');
+                }
+            },
+            error: function(xhr) {
+                alert("Failed to check reservations.");
+                console.log(xhr.responseText);
+            }
+        });
+
+    } else {
+        $('#table_id').prop('disabled', true).removeAttr('required');
+        $('#table_select_wrapper').hide();
+        $('#table_id').val('');
+    }
+});
+
 
                 function toggleNoItemsRow() {
                     const hasItems = $('#cart_table tbody tr').not('.no-items-row').length > 0;

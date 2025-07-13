@@ -1,5 +1,5 @@
 <?php
-include_once '../model/table_model.php';
+include_once '../model/user_model.php';
 
 $userrow = $_SESSION['user'];
 $user_id = $userrow['user_id'];

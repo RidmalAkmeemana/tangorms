@@ -2,14 +2,14 @@
 
 include_once '../commons/session.php';
 include_once '../commons/helpers/permission_helper.php';
-include_once '../model/purchasing_model.php';
+include_once '../model/reservation_model.php';
 
 checkFunctionPermission($_SERVER['PHP_SELF']);
 
 $userrow = $_SESSION["user"];
 
-$purchasingObj = new Purchasing();
-$orderResult = $purchasingObj->getAllPaidOrders();
+$reservationObj = new Reservation();
+$reservationResult = $reservationObj->getAllReservations();
 
 ?>
 
@@ -169,9 +169,9 @@ $orderResult = $purchasingObj->getAllPaidOrders();
 
 <body>
     <div class="container">
-        <?php $pageName = "PURCHASING MANAGEMENT"; ?>
+        <?php $pageName = "RESERVATION MANAGEMENT"; ?>
         <?php include_once "../includes/header_row_includes.php"; ?>
-        <?php require 'purchasing-management-sidebar.php'; ?>
+        <?php require 'reservation-management-sidebar.php'; ?>
 
         <div class="col-md-9">
             <?php if (isset($_GET["msg"])): ?>
@@ -191,98 +191,40 @@ $orderResult = $purchasingObj->getAllPaidOrders();
                                     <th class="text-start">Receipt No</th>
                                     <th class="text-start">Customer Name</th>
                                     <th class="text-center">Status</th>
-                                    <th class="text-center">Order Type</th>
                                     <th class="text-center">Table Name</th>
-                                    <th class="text-center">Oder Priority</th>
-                                    <th class="text-center">Total Amount</th>
-                                    <th class="text-center">Payment Status</th>
-                                    <th class="text-center">Due Amount</th>
-                                    <th class="text-center">Invoice Date</th>
-                                    <th class="text-center">Last Payment Date</th>
-                                    <th class="text-center">Actions</th>
+                                    <th class="text-center">Reserved Date</th>
+                                    <th class="text-center">Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php while ($orderRow = $orderResult->fetch_assoc()): ?>
+                                <?php while ($reservationRow = $reservationResult->fetch_assoc()): ?>
                                     <?php
-                                    $order_status = $orderRow["order_status"];
-                                    $receipt_no = $orderRow["receipt_no"];
-                                    $payment_status = $orderRow["payment_status"];
-                                    $order_priority = $orderRow["order_priority"];
 
-                                    switch (strtolower($order_status)) {
-                                        case "pending":
-                                            $status_class = "badge bg-warning text-dark"; // yellow
-                                            break;
-                                        case "preparing":
-                                            $status_class = "badge bg-info text-dark"; // light blue
-                                            break;
-                                        case "served":
-                                            $status_class = "badge bg-primary"; // blue
-                                            break;
-                                        case "delivering":
-                                            $status_class = "badge bg-secondary"; // grey
-                                            break;
-                                        case "completed":
+                                    $reservation_status = $reservationRow["reservation_status"];
+                                    $reservation_no = $reservationRow["reservation_no"];
+
+                                    switch (strtolower($reservation_status)) {
+                                        case "reserved":
                                             $status_class = "badge bg-success"; // green
-                                            break;
-                                        case "rejected":
-                                            $status_class = "badge bg-danger"; // red
-                                            break;
-                                        case "canceled":
-                                            $status_class = "badge bg-dark"; // black
                                             break;
                                         default:
                                             $status_class = "badge bg-light text-dark"; // fallback
                                             break;
                                     }
 
-                                    switch (strtolower($payment_status)) {
-                                        case "fully paid":
-                                            $payment_status_class = "badge bg-success";
-                                            break;
-                                        case "partially paid":
-                                            $payment_status_class = "badge bg-warning";
-                                            break;
-                                        case "unpaid":
-                                            $payment_status_class = "badge bg-danger";
-                                            break;
-                                    }
-
-                                    switch (strtolower($order_priority)) {
-                                        case "low":
-                                            $priority_status_class = "badge bg-success";
-                                            break;
-                                        case "moderate":
-                                            $priority_status_class = "badge bg-warning";
-                                            break;
-                                        case "high":
-                                            $priority_status_class = "badge bg-danger";
-                                            break;
-                                    }
                                     ?>
                                     <tr>
-                                        <td class="text-start"><?= $orderRow["receipt_no"] ?></td>
-                                        <td class="text-start"><?= $orderRow["customer_name"] ?></td>
+                                        <td class="text-start"><?= $reservationRow["reservation_no"] ?></td>
+                                        <td class="text-start"><?= $reservationRow["customer_name"] ?></td>
                                         <td>
-                                            <span class="<?= $status_class ?> px-3 py-1"><?= $order_status ?></span>
+                                            <span class="<?= $status_class ?> px-3 py-1"><?= $reservation_status ?></span>
                                         </td>
-                                        <td class="text-start"><?= $orderRow["order_type"] ?></td>
-                                        <td class="text-start"><?= !empty($orderRow["table_name"]) ? $orderRow["table_name"] : "N/A" ?></td>
-                                        <td>
-                                            <span class="<?= $priority_status_class ?> px-3 py-1"><?= $order_priority ?></span>
-                                        </td>
-                                        <td class="text-start"><?= $orderRow["total_amount"] ?></td>
-                                        <td>
-                                            <span class="<?= $payment_status_class ?> px-3 py-1"><?= $payment_status ?></span>
-                                        </td>
-                                        <td class="text-start"><?= $orderRow["due_amount"] ?></td>
-                                        <td class="text-start"><?= $orderRow["invoice_date"] ?></td>
-                                        <td class="text-start"><?= !empty($orderRow["payment_date"]) ? $orderRow["payment_date"] : "N/A" ?></td>
+                                        <td class="text-start"><?= $reservationRow["table_name"] ?></td>
+                                        <td class="text-start"><?= $reservationRow["reserved_date"] ?></td>
                                         <td>
                                             <div class="d-flex flex-wrap gap-2 justify-content-center">
-                                                <a href="reverse-now.php?receipt_no=<?= $orderRow["receipt_no"] ?>" class="btn btn-sm btn-warning">
-                                                    <i class="glyphicon glyphicon-retweet" aria-hidden="true"></i>
+                                                <a href="edit-reservation.php?reservation_no=<?= $reservationRow["reservation_no"] ?>" class="btn btn-sm btn-warning">
+                                                    <i class="fa fa-pencil" aria-hidden="true"></i>
                                                 </a>
                                             </div>
                                         </td>

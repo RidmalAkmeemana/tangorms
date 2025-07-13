@@ -17,27 +17,27 @@ $accessibleUrls = array_column($accessibleFunctions, 'function_url');
         </a>
         <!-- Permission-based links -->
 
-        <?php if (in_array('purchasing.php', $accessibleUrls)) { ?>
-            <a href="purchasing.php" class="list-group-item">
+        <?php if (in_array('reports.php', $accessibleUrls)) { ?>
+            <a href="reports.php" class="list-group-item">
                 <span class="glyphicon glyphicon-th-list"></span> &nbsp; Main Menu
             </a>
         <?php } ?>
 
-        <?php if (in_array('receipt-payment.php', $accessibleUrls)) { ?>
-            <a href="receipt-payment.php" class="list-group-item">
-                <span class="glyphicon glyphicon-usd"></span> &nbsp; Receipt Payment
+        <?php if (in_array('sales-report.php', $accessibleUrls)) { ?>
+            <a href="sales-report.php" class="list-group-item">
+                <span class="glyphicon glyphicon-book"></span> &nbsp; Sales Report
             </a>
         <?php } ?>
 
-        <?php if (in_array('payment-reversal.php', $accessibleUrls)) { ?>
-            <a href="payment-reversal.php" class="list-group-item">
-                <span class="glyphicon glyphicon-retweet"></span> &nbsp; Payment Reversal
+        <?php if (in_array('customer-outstanding-report.php', $accessibleUrls)) { ?>
+            <a href="customer-outstanding-report.php" class="list-group-item">
+                <span class="glyphicon glyphicon-book"></span> &nbsp; Customer Outstanding Report
             </a>
         <?php } ?>
 
-        <?php if (in_array('purchasing-report.php', $accessibleUrls)) { ?>
-            <a href="purchasing-report.php" class="list-group-item">
-               <span class="glyphicon glyphicon-book"></span> &nbsp; Generate Purchasing Report
+        <?php if (in_array('payment-report.php', $accessibleUrls)) { ?>
+            <a href="payment-report.php" class="list-group-item">
+                <span class="glyphicon glyphicon-book"></span> &nbsp; Payment Report
             </a>
         <?php } ?>
     </ul>

@@ -107,6 +107,13 @@ class Report
         return $con->query($sql);
     }
 
+    public function getPaidReceiptNo()
+    {
+        $con = $GLOBALS["con"];
+        $sql = "SELECT DISTINCT receipt_no FROM orders WHERE payment_status IN ('Fully Paid', 'Partially Paid') ORDER BY receipt_no DESC";
+        return $con->query($sql);
+    }
+
     public function getAllCustomers()
     {
         $con = $GLOBALS["con"];

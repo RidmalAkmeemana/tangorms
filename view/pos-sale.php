@@ -169,7 +169,7 @@ $categoryResult = $menuObj->getAllCategory();
                         <select name="customer_id" id="customer_id" class="form-control" required>
                             <option value="">-- Select Customer --</option>
                             <?php while ($customerRow = $customerResult->fetch_assoc()): ?>
-                                <option value="<?= $customerRow['customer_id']; ?>"><?= $customerRow['customer_name']; ?></option>
+                                <option value="<?= $customerRow['customer_id']; ?>"><?= $customerRow['customer_name']; ?> (<?= $customerRow['customer_nic']; ?>)</option>
                             <?php endwhile; ?>
                         </select>
                     </div>
@@ -344,48 +344,50 @@ $categoryResult = $menuObj->getAllCategory();
             $(document).ready(function() {
 
                 $('#order_type').on('change', function() {
-    const orderType = $(this).val();
+                    const orderType = $(this).val();
 
-    if (orderType === 'Dine-In') {
-        $('#table_select_wrapper').show();
-        $('#table_id').prop('disabled', false).attr('required', true);
+                    if (orderType === 'Dine-In') {
+                        $('#table_select_wrapper').show();
+                        $('#table_id').prop('disabled', false).attr('required', true);
 
-        const customerId = $('#customer_id').val();
-        if (!customerId) {
-            alert("Please select a customer first.");
-            $('#order_type').val('');
-            $('#table_select_wrapper').hide();
-            $('#table_id').val('').prop('disabled', true).removeAttr('required');
-            return;
-        }
+                        const customerId = $('#customer_id').val();
+                        if (!customerId) {
+                            alert("Please select a customer first.");
+                            $('#order_type').val('');
+                            $('#table_select_wrapper').hide();
+                            $('#table_id').val('').prop('disabled', true).removeAttr('required');
+                            return;
+                        }
 
-        $.ajax({
-            url: '../ajax/get_table_by_order_type.php',
-            method: 'GET',
-            data: { customer_id: customerId },
-            dataType: 'json',
-            success: function(response) {
-                $('#table_id').html('<option value="">-- Select Table --</option>');
-                if (response.length > 0) {
-                    response.forEach(function(table) {
-                        $('#table_id').append('<option value="' + table.table_id + '">' + table.table_name + '</option>');
-                    });
-                } else {
-                    $('#table_id').html('<option value="">No tables available</option>');
-                }
-            },
-            error: function(xhr) {
-                alert("Failed to check reservations.");
-                console.log(xhr.responseText);
-            }
-        });
+                        $.ajax({
+                            url: '../ajax/get_table_by_order_type.php',
+                            method: 'GET',
+                            data: {
+                                customer_id: customerId
+                            },
+                            dataType: 'json',
+                            success: function(response) {
+                                $('#table_id').html('<option value="">-- Select Table --</option>');
+                                if (response.length > 0) {
+                                    response.forEach(function(table) {
+                                        $('#table_id').append('<option value="' + table.table_id + '">' + table.table_name + '</option>');
+                                    });
+                                } else {
+                                    $('#table_id').html('<option value="">No tables available</option>');
+                                }
+                            },
+                            error: function(xhr) {
+                                alert("Failed to check reservations.");
+                                console.log(xhr.responseText);
+                            }
+                        });
 
-    } else {
-        $('#table_id').prop('disabled', true).removeAttr('required');
-        $('#table_select_wrapper').hide();
-        $('#table_id').val('');
-    }
-});
+                    } else {
+                        $('#table_id').prop('disabled', true).removeAttr('required');
+                        $('#table_select_wrapper').hide();
+                        $('#table_id').val('');
+                    }
+                });
 
 
                 function toggleNoItemsRow() {
@@ -588,6 +590,14 @@ $categoryResult = $menuObj->getAllCategory();
                 $('#paid_amount').on('input', function() {
                     calculateTotals();
                 });
+            });
+
+            // Prevent negative values for discount and paid amount
+            $('#discount, #paid_amount').on('input', function() {
+                let val = parseFloat($(this).val());
+                if (val < 0 || isNaN(val)) {
+                    $(this).val(0);
+                }
             });
         </script>
 

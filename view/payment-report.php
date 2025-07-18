@@ -9,7 +9,7 @@ $userrow = $_SESSION["user"];
 $user_id = $userrow["user_id"];
 
 $reportObj = new Report();
-$receiptNo = $reportObj->getAllReceiptNo();
+$receiptNo = $reportObj->getPaidReceiptNo();
 ?>
 <!DOCTYPE html>
 <html lang="en">
